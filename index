@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ing. Sergeo Olivera Sagastegui | Inmobiliaria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a2463;
+            --secondary: #3e92cc;
+            --accent: #1e6091;
+            --light: #f0f4f8;
+            --white: #ffffff;
+            --text: #1a1a2e;
+            --text-light: #4a5568;
+            --gold-accent: #d4af37;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Varela Round', sans-serif;
+            color: var(--text);
+            background: var(--light);
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #E8E8E8;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 0.8rem 2rem;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1.26rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: flex-end;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 
+                         0 0.5px 1px rgba(0, 0, 0, 0.05);
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #b8941f 0%, #d4af37 50%, #b8941f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-right: 0.3rem;
+            font-size: 4.2rem;
+            display: inline-block;
+            vertical-align: baseline;
+            line-height: 1;
+            font-weight: 600;
+            filter: drop-shadow(0 1px 2px rgba(212, 175, 55, 0.2)) 
+                    drop-shadow(0 0.5px 1px rgba(0, 0, 0, 0.1));
+        }
+
+        .logo-full {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .logo-full .logo-icon {
+            margin-bottom: -0.15rem;
+        }
+
+        .logo-full-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.2rem;
+        }
+
+        .logo-full-ing {
+            font-size: 0.76rem;
+            line-height: 1;
+        }
+
+        .logo-full-name {
+            font-size: 1.26rem;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .logo-short {
+            display: none;
+        }
+
+        .logo-short-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+
+        .logo-short-ing {
+            display: block;
+            font-size: 0.76rem;
+            line-height: 1;
+        }
+
+        .logo-short-sos {
+            display: block;
+            font-size: 1.89rem;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .nav-links {
+            display: none;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+
+        .nav-links.mobile-active {
+            display: flex;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover .nav-icon {
+            opacity: 0.6;
+        }
+
+        .nav-icon {
+            width: 28px;
+            height: 28px;
+            transition: opacity 0.3s ease;
+            color: #808080;
+        }
+
+        /* Property Feed Section */
+        .property-feed {
+            margin-top: 80px;
+            padding: 3rem 2rem;
+            background: var(--light);
+            min-height: 100vh;
+        }
+
+        .feed-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feed-card {
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: fadeInCard 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .feed-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feed-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .feed-card:hover .feed-image {
+            transform: scale(1.05);
+        }
+
+        .feed-image-container {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .feed-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+
+        .feed-info {
+            padding: 1.5rem;
+        }
+
+        .feed-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feed-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feed-location {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .feed-features {
+            display: flex;
+            gap: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e8e8e8;
+            font-size: 0.85rem;
+        }
+
+        .feed-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-light);
+        }
+
+        .feed-feature strong {
+            color: var(--primary);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--white);
+            padding: 3rem 2rem;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+        }
+
+        .filter-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e8e8e8;
+            background: var(--light);
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: var(--white);
+        }
+
+        .filter-button {
+            padding: 0.9rem 2.5rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            border-radius: 2px;
+            margin-top: 1.8rem;
+        }
+
+        .filter-button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Properties Section */
+        .properties {
+            max-width: 1400px;
+            margin: 4rem auto;
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--secondary);
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .property-card {
+            background: var(--white);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .property-card:hover .property-image {
+            transform: scale(1.08);
+        }
+
+        .property-image-container {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .property-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        .property-info {
+            padding: 2rem;
+        }
+
+        .property-price {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .property-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-location {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .property-features {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e8e8e8;
+            font-size: 0.9rem;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .feature strong {
+            color: var(--primary);
+        }
+
+        /* About Section */
+        .about {
+            background: var(--primary);
+            color: var(--white);
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(62, 146, 204, 0.15), transparent);
+        }
+
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about h2 {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .about p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            max-width: 800px;
+            margin: 6rem auto;
+            padding: 2rem;
+        }
+
+        .contact h2 {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary);
+        }
+
+        .contact-form {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e8e8e8;
+            background: var(--light);
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: var(--white);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--secondary);
+            color: var(--white);
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        .submit-button:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(62, 146, 204, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: var(--white);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo-full {
+                display: none;
+            }
+
+            .logo-short {
+                display: flex;
+                align-items: flex-end;
+                gap: 0.5rem;
+            }
+
+            .logo-short .logo-icon {
+                margin-right: 0.3rem;
+                margin-bottom: -0.15rem;
+                line-height: 1;
+            }
+
+            .logo-short-container {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.2rem;
+            }
+
+            .logo-short-ing {
+                margin-bottom: 0.1rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                max-width: 300px;
+                background: #E8E8E8;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2.5rem;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+                transition: right 0.4s ease;
+                z-index: 1000;
+                padding: 2rem;
+            }
+
+            .nav-links.mobile-active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.2rem;
+                width: 100%;
+                text-align: center;
+                padding: 1rem;
+            }
+
+            .nav-links a::after {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .feed-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .feed-image {
+                height: 280px;
+            }
+
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-container {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="#inicio" class="logo">
+                <span class="logo-full">
+                    <span class="logo-icon">⚜</span>
+                    <span class="logo-full-container">
+                        <span class="logo-full-ing">Ing.</span>
+                        <span class="logo-full-name"><span>Sergeo Olivera</span> Sagastegui</span>
+                    </span>
+                </span>
+                <span class="logo-short">
+                    <span class="logo-icon">⚜</span>
+                    <span class="logo-short-container">
+                        <span class="logo-short-ing">Ing.</span>
+                        <span class="logo-short-sos"><span>SOS</span></span>
+                    </span>
+                </span>
+            </a>
+            <button class="nav-button" onclick="toggleNavMenu()">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="4" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="13" cy="6" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <line x1="16" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <line x1="4" y1="12" x2="7" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="10" cy="12" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <line x1="13" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <line x1="4" y1="18" x2="13" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="16" cy="18" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <line x1="19" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#propiedades">Propiedades</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Property Feed Section -->
+    <section class="property-feed" id="inicio">
+        <div class="feed-container">
+            <!-- Property Feed Cards will be inserted here by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label>Tipo de Propiedad</label>
+                <select id="filterType">
+                    <option value="todos">Todos</option>
+                    <option value="casa">Casa</option>
+                    <option value="apartamento">Apartamento</option>
+                    <option value="terreno">Terreno</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Precio Máximo</label>
+                <input type="number" id="filterPrice" placeholder="$500,000">
+            </div>
+            <div class="filter-group">
+                <label>Ubicación</label>
+                <select id="filterLocation">
+                    <option value="todos">Todas</option>
+                    <option value="centro">Centro</option>
+                    <option value="norte">Zona Norte</option>
+                    <option value="sur">Zona Sur</option>
+                </select>
+            </div>
+            <button class="filter-button" onclick="filterProperties()">Buscar</button>
+        </div>
+    </section>
+
+    <!-- Properties Section -->
+    <section class="properties" id="propiedades">
+        <h2 class="section-title">Propiedades Destacadas</h2>
+        <div class="property-grid" id="propertyGrid">
+            <!-- Properties will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="nosotros">
+        <div class="about-content">
+            <h2>Sobre Nosotros</h2>
+            <p>Con más de 15 años de experiencia en el mercado inmobiliario, nos especializamos en conectar a nuestros clientes con las propiedades de sus sueños.</p>
+            <p>Nuestro equipo de expertos está comprometido con brindar un servicio personalizado, transparente y de la más alta calidad en cada etapa del proceso.</p>
+            <p>Tu satisfacción es nuestra prioridad. Creemos que encontrar el hogar perfecto es más que una transacción, es el inicio de una nueva historia.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contacto">
+        <h2>Contáctanos</h2>
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="name">Nombre Completo</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Mensaje</label>
+                <textarea id="message" required></textarea>
+            </div>
+            <button type="submit" class="submit-button">ENVIAR MENSAJE</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#inicio">Inicio</a>
+                <a href="#propiedades">Propiedades</a>
+                <a href="#nosotros">Nosotros</a>
+                <a href="#contacto">Contacto</a>
+            </div>
+            <p>&copy; 2024 Ing. Sergeo Olivera Sagastegui - Inmobiliaria. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleNavMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('mobile-active');
+        }
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navLinks = document.getElementById('navLinks');
+                navLinks.classList.remove('mobile-active');
+            });
+        });
+
+        // Sample property data
+        const properties = [
+            {
+                id: 1,
+                type: 'casa',
+                price: 450000,
+                title: 'Villa Moderna con Piscina',
+                location: 'Zona Norte',
+                locationKey: 'norte',
+                image: 'images/3.jpg',
+                bedrooms: 4,
+                bathrooms: 3,
+                area: 320,
+                status: 'NUEVA'
+            },
+            {
+                id: 2,
+                type: 'apartamento',
+                price: 280000,
+                title: 'Apartamento de Lujo Centro',
+                location: 'Centro',
+                locationKey: 'centro',
+                image: 'images/5.jpg',
+                bedrooms: 2,
+                bathrooms: 2,
+                area: 120,
+                status: 'DISPONIBLE'
+            },
+            {
+                id: 3,
+                type: 'casa',
+                price: 650000,
+                title: 'Casa Colonial Restaurada',
+                location: 'Centro Histórico',
+                locationKey: 'centro',
+                image: 'images/1.jpg',
+                bedrooms: 5,
+                bathrooms: 4,
+                area: 450,
+                status: 'EXCLUSIVA'
+            },
+            {
+                id: 4,
+                type: 'apartamento',
+                price: 195000,
+                title: 'Penthouse con Vista Panorámica',
+                location: 'Zona Sur',
+                locationKey: 'sur',
+                image: 'images/6.jpg',
+                bedrooms: 3,
+                bathrooms: 2,
+                area: 180,
+                status: 'NUEVA'
+            },
+            {
+                id: 5,
+                type: 'terreno',
+                price: 120000,
+                title: 'Terreno Residencial Premium',
+                location: 'Zona Norte',
+                locationKey: 'norte',
+                image: 'images/4.jpg',
+                bedrooms: null,
+                bathrooms: null,
+                area: 500,
+                status: 'DISPONIBLE'
+            },
+            {
+                id: 6,
+                type: 'casa',
+                price: 380000,
+                title: 'Casa Moderna con Jardín',
+                location: 'Zona Sur',
+                locationKey: 'sur',
+                image: 'images/2.jpg',
+                bedrooms: 3,
+                bathrooms: 2,
+                area: 250,
+                status: 'DISPONIBLE'
+            }
+        ];
+
+        // Render property feed
+        function renderPropertyFeed() {
+            const feedContainer = document.querySelector('.feed-container');
+            
+            properties.forEach((property, index) => {
+                const card = document.createElement('div');
+                card.className = 'feed-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                let featuresHTML = '';
+                if (property.bedrooms) {
+                    featuresHTML = `
+                        <div class="feed-features">
+                            <div class="feed-feature">
+                                <span>🛏️</span>
+                                <span><strong>${property.bedrooms}</strong> Hab.</span>
+                            </div>
+                            <div class="feed-feature">
+                                <span>🚿</span>
+                                <span><strong>${property.bathrooms}</strong> Baños</span>
+                            </div>
+                            <div class="feed-feature">
+                                <span>📐</span>
+                                <span><strong>${property.area}</strong> m²</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    featuresHTML = `
+                        <div class="feed-features">
+                            <div class="feed-feature">
+                                <span>📐</span>
+                                <span><strong>${property.area}</strong> m²</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="feed-image-container">
+                        <img src="${property.image}" alt="${property.title}" class="feed-image">
+                        <div class="feed-status">${property.status}</div>
+                    </div>
+                    <div class="feed-info">
+                        <div class="feed-price">$${property.price.toLocaleString()}</div>
+                        <h3 class="feed-title">${property.title}</h3>
+                        <div class="feed-location">
+                            <span>📍</span>
+                            <span>${property.location}</span>
+                        </div>
+                        ${featuresHTML}
+                    </div>
+                `;
+                
+                feedContainer.appendChild(card);
+            });
+        }
+
+        // Initial render of property feed
+        renderPropertyFeed();
+
+        // Render properties
+        function renderProperties(propertiesToShow = properties) {
+            const grid = document.getElementById('propertyGrid');
+            grid.innerHTML = '';
+
+            propertiesToShow.forEach((property, index) => {
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                let featuresHTML = '';
+                if (property.bedrooms) {
+                    featuresHTML = `
+                        <div class="property-features">
+                            <div class="feature">
+                                <span>🛏️</span>
+                                <span><strong>${property.bedrooms}</strong> Hab.</span>
+                            </div>
+                            <div class="feature">
+                                <span>🚿</span>
+                                <span><strong>${property.bathrooms}</strong> Baños</span>
+                            </div>
+                            <div class="feature">
+                                <span>📐</span>
+                                <span><strong>${property.area}</strong> m²</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    featuresHTML = `
+                        <div class="property-features">
+                            <div class="feature">
+                                <span>📐</span>
+                                <span><strong>${property.area}</strong> m²</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="property-image-container">
+                        <img src="${property.image}" alt="${property.title}" class="property-image">
+                        <div class="property-status">${property.status}</div>
+                    </div>
+                    <div class="property-info">
+                        <div class="property-price">$${property.price.toLocaleString()}</div>
+                        <h3 class="property-title">${property.title}</h3>
+                        <div class="property-location">
+                            <span>📍</span>
+                            <span>${property.location}</span>
+                        </div>
+                        ${featuresHTML}
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+
+            // Add fade-in animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInCard {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .property-card {
+                    animation: fadeInCard 0.6s ease-out forwards;
+                    opacity: 0;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Filter properties
+        function filterProperties() {
+            const type = document.getElementById('filterType').value;
+            const maxPrice = parseFloat(document.getElementById('filterPrice').value) || Infinity;
+            const location = document.getElementById('filterLocation').value;
+
+            const filtered = properties.filter(property => {
+                const typeMatch = type === 'todos' || property.type === type;
+                const priceMatch = property.price <= maxPrice;
+                const locationMatch = location === 'todos' || property.locationKey === location;
+                
+                return typeMatch && priceMatch && locationMatch;
+            });
+
+            renderProperties(filtered);
+        }
+
+        // Handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            alert('¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.');
+            event.target.reset();
+        }
+
+        // Initial render
+        renderProperties();
+
+        // Smooth scroll offset for fixed header
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                const offset = 80;
+                const targetPosition = target.offsetTop - offset;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
