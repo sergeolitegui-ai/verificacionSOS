@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Documentos - Verificación SOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0a2463;
+            --secondary: #3e92cc;
+            --accent: #d4af37;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Varela Round', sans-serif;
+            background: linear-gradient(135deg, #0a2463 0%, #3e92cc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #b8941f 0%, #d4af37 50%, #b8941f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Login State */
+        .login-section {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .login-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-text {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .google-login-button {
+            width: 100%;
+            max-width: 320px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        .google-login-button:hover {
+            background: #f8f9fa;
+            border-color: #4285F4;
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+        }
+
+        .google-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .user-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--secondary);
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .user-email {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .logout-button {
+            background: transparent;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+
+        /* Property Info */
+        .property-info {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .property-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .property-date {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        /* Documents List */
+        .documents-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .document-card {
+            background: #f9f9f9;
+            border: 2px solid #e5e5e5;
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .document-card:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 4px 12px rgba(62, 146, 204, 0.15);
+        }
+
+        .document-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .document-icon {
+            font-size: 2.5rem;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .document-name {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .document-size {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .download-button {
+            flex: 1;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .download-button:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(10, 36, 99, 0.3);
+        }
+
+        .preview-button {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preview-button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Password Modal */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .password-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(6px);
+        }
+
+        .password-modal-content {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        .password-modal-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .password-modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .password-modal-subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .password-modal-document {
+            background: #f5f5f5;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .password-input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .password-input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(62, 146, 204, 0.1);
+        }
+
+        .password-modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .password-submit-button {
+            flex: 1;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 10px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-submit-button:hover {
+            background: var(--primary);
+        }
+
+        .password-cancel-button {
+            flex: 1;
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            padding: 0.875rem;
+            border-radius: 10px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-cancel-button:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+
+        .password-hint {
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        /* No Access State */
+        .no-access {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .no-access-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .no-access-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .no-access-text {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .contact-info {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Hidden State */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 2rem 1.5rem;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            .document-actions {
+                flex-direction: column;
+            }
+
+            .password-modal-content {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">⚜</div>
+                <h1 class="title">Portal de Documentos</h1>
+                <p class="subtitle">Verificación SOS</p>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Cargando...</p>
+            </div>
+
+            <!-- Login State -->
+            <div id="loginState" class="login-section hidden">
+                <div class="login-icon">🔒</div>
+                <p class="login-text">
+                    Inicia sesión con tu cuenta Google para acceder a tus documentos de propiedad
+                </p>
+                <button class="google-login-button" onclick="loginWithGoogle()">
+                    <svg class="google-icon" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continuar con Google
+                </button>
+            </div>
+
+            <!-- No Access State -->
+            <div id="noAccessState" class="no-access hidden">
+                <div class="no-access-icon">⚠️</div>
+                <h2 class="no-access-title">No tienes acceso</h2>
+                <p class="no-access-text">
+                    Tu cuenta no tiene documentos asignados.<br>
+                    Si eres cliente, por favor contacta con nosotros.
+                </p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span>📞</span>
+                        <span>+51 XXX XXX XXX</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>📧</span>
+                        <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="076eEME9M9cSy9FvfHvcx2gMPkp1H5Dj4YaKufPRsAyon8Tf">[email&#160;protected]</a></span>
+                    </div>
+                </div>
+                <button class="logout-button" onclick="handleLogout()">Cerrar Sesión</button>
+            </div>
+
+            <!-- Documents State -->
+            <div id="documentsState" class="hidden">
+                <!-- User Info -->
+                <div class="user-info">
+                    <img id="userPhoto" class="user-photo" src="" alt="User">
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Usuario</div>
+                        <div class="user-email" id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4e2b232f27220e2b362f233e222b602d2123">[email&#160;protected]</a></div>
+                    </div>
+                    <button class="logout-button" onclick="handleLogout()">Cerrar Sesión</button>
+                </div>
+
+                <!-- Property Info -->
+                <div class="property-info">
+                    <div class="property-name" id="propertyName">📍 Tu Propiedad</div>
+                    <div class="property-date" id="propertyDate">Actualizado: --</div>
+                </div>
+
+                <!-- Documents Grid -->
+                <div class="documents-grid" id="documentsGrid">
+                    <!-- Documents will be loaded here dynamically -->
+                </div>
+
+                <div style="text-align: center; color: #999; font-size: 0.9rem; margin-top: 1rem;">
+                    💡 Guarda estos documentos en un lugar seguro
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="password-modal">
+        <div class="password-modal-overlay" onclick="closePasswordModal()"></div>
+        <div class="password-modal-content">
+            <div class="password-modal-icon">🔐</div>
+            <h2 class="password-modal-title">Contraseña Requerida</h2>
+            <p class="password-modal-subtitle">Para descargar este documento</p>
+            
+            <div class="password-modal-document" id="modalDocumentName">
+                Documento
+            </div>
+
+            <div class="password-input-group">
+                <label class="password-input-label">Ingresa tu contraseña:</label>
+                <input 
+                    type="password" 
+                    id="passwordInput" 
+                    class="password-input" 
+                    placeholder="SOS-XX-XXXX"
+                    onkeypress="handlePasswordKeypress(event)"
+                >
+            </div>
+
+            <div class="password-modal-actions">
+                <button class="password-submit-button" onclick="verifyAndDownload()">
+                    Descargar
+                </button>
+                <button class="password-cancel-button" onclick="closePasswordModal()">
+                    Cancelar
+                </button>
+            </div>
+
+            <p class="password-hint">
+                ℹ️ Contraseña en tu documento físico
+            </p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK v9 -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYHXbX2Ra8RMF_un8N610jEjsDn9Rvw0U",
+            authDomain: "verificacionsos-d55a6.firebaseapp.com",
+            projectId: "verificacionsos-d55a6",
+            storageBucket: "verificacionsos-d55a6.firebasestorage.app",
+            messagingSenderId: "17499432341",
+            appId: "1:17499432341:web:147e6abbc7b3dff3fb829c",
+            measurementId: "G-RGWGTE1Q4V"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Google Sign-In Provider
+        const googleProvider = new GoogleAuthProvider();
+        googleProvider.setCustomParameters({
+            prompt: 'select_account'
+        });
+
+        // Make available globally
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseGoogleProvider = googleProvider;
+        window.firebaseGetDoc = getDoc;
+        window.firebaseDoc = doc;
+        window.firebaseSignOut = signOut;
+        window.currentUser = null;
+        window.clientData = null;
+
+        // Auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                window.currentUser = user;
+                console.log('✅ Usuario logueado:', user.email);
+                await loadClientData(user.email);
+            } else {
+                window.currentUser = null;
+                console.log('❌ No hay usuario logueado');
+                showLoginState();
+            }
+        });
+
+        // Load client data from Firestore
+        async function loadClientData(email) {
+            showLoadingState();
+            
+            try {
+                const clientDoc = await getDoc(doc(db, 'clients', email));
+                
+                if (clientDoc.exists()) {
+                    window.clientData = clientDoc.data();
+                    console.log('✅ Datos del cliente cargados:', window.clientData);
+                    showDocumentsState();
+                } else {
+                    console.log('❌ Cliente no tiene acceso');
+                    showNoAccessState();
+                }
+            } catch (error) {
+                console.error('❌ Error al cargar datos:', error);
+                alert('Error al cargar tus documentos. Por favor intenta de nuevo.');
+                showLoginState();
+            }
+        }
+
+        console.log('🔥 Firebase inicializado correctamente');
+    </script>
+
+    <script>
+        // UI State Management
+        function showLoadingState() {
+            hideAllStates();
+            document.getElementById('loadingState').classList.remove('hidden');
+        }
+
+        function showLoginState() {
+            hideAllStates();
+            document.getElementById('loginState').classList.remove('hidden');
+        }
+
+        function showNoAccessState() {
+            hideAllStates();
+            document.getElementById('noAccessState').classList.remove('hidden');
+            
+            // Update user info if available
+            if (window.currentUser) {
+                const noAccessDiv = document.getElementById('noAccessState');
+                const userInfo = `
+                    <div class="user-info" style="margin-bottom: 2rem;">
+                        <img class="user-photo" src="${window.currentUser.photoURL}" alt="User">
+                        <div class="user-details">
+                            <div class="user-name">${window.currentUser.displayName}</div>
+                            <div class="user-email">${window.currentUser.email}</div>
+                        </div>
+                    </div>
+                `;
+                noAccessDiv.insertAdjacentHTML('afterbegin', userInfo);
+            }
+        }
+
+        function showDocumentsState() {
+            hideAllStates();
+            document.getElementById('documentsState').classList.remove('hidden');
+            
+            // Update user info
+            if (window.currentUser) {
+                document.getElementById('userPhoto').src = window.currentUser.photoURL || '';
+                document.getElementById('userName').textContent = window.currentUser.displayName || 'Usuario';
+                document.getElementById('userEmail').textContent = window.currentUser.email || '';
+            }
+            
+            // Update property info
+            if (window.clientData) {
+                document.getElementById('propertyName').textContent = '📍 ' + (window.clientData.propiedad || 'Tu Propiedad');
+                
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+                document.getElementById('propertyDate').textContent = 'Actualizado: ' + dateStr;
+                
+                // Render documents
+                renderDocuments();
+            }
+        }
+
+        function hideAllStates() {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('loginState').classList.add('hidden');
+            document.getElementById('noAccessState').classList.add('hidden');
+            document.getElementById('documentsState').classList.add('hidden');
+        }
+
+        // Render documents
+        function renderDocuments() {
+            const grid = document.getElementById('documentsGrid');
+            grid.innerHTML = '';
+            
+            if (!window.clientData || !window.clientData.documentos) {
+                grid.innerHTML = '<p style="text-align: center; color: #999;">No hay documentos disponibles</p>';
+                return;
+            }
+            
+            window.clientData.documentos.forEach((doc, index) => {
+                const card = `
+                    <div class="document-card">
+                        <div class="document-header">
+                            <div class="document-icon">${doc.icono || '📄'}</div>
+                            <div class="document-info">
+                                <div class="document-title">${doc.tipo ? doc.tipo.toUpperCase() : 'DOCUMENTO'}</div>
+                                <div class="document-name">${doc.nombre || 'documento.pdf'}</div>
+                                <div class="document-size">${doc.tamaño || '-- MB'} • ${getFileExtension(doc.nombre)}</div>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <button class="download-button" onclick="requestDownload(${index})">
+                                ⬇️ Descargar Archivo
+                            </button>
+                            ${doc.nombre.endsWith('.pdf') ? '<button class="preview-button" onclick="previewDocument(' + index + ')">👁️ Ver Online</button>' : ''}
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        function getFileExtension(filename) {
+            return filename.split('.').pop().toUpperCase();
+        }
+
+        // Google Login
+        function loginWithGoogle() {
+            if (!window.firebaseAuth || !window.firebaseGoogleProvider) {
+                alert('Firebase aún se está cargando. Por favor espera un momento.');
+                return;
+            }
+
+            window.firebaseSignInWithPopup = async (auth, provider) => {
+                const { signInWithPopup } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                return signInWithPopup(auth, provider);
+            };
+
+            window.firebaseSignInWithPopup(window.firebaseAuth, window.firebaseGoogleProvider)
+                .then((result) => {
+                    console.log('✅ Login exitoso:', result.user.email);
+                })
+                .catch((error) => {
+                    console.error('❌ Error en login:', error);
+                    if (error.code === 'auth/popup-closed-by-user') {
+                        return;
+                    }
+                    alert('Hubo un error al iniciar sesión. Por favor intenta de nuevo.');
+                });
+        }
+
+        // Logout
+        function handleLogout() {
+            if (confirm('¿Estás seguro que deseas cerrar sesión?')) {
+                window.firebaseSignOut(window.firebaseAuth)
+                    .then(() => {
+                        console.log('✅ Sesión cerrada');
+                        window.clientData = null;
+                    })
+                    .catch((error) => {
+                        console.error('❌ Error al cerrar sesión:', error);
+                    });
+            }
+        }
+
+        // Password Modal
+        let pendingDownload = null;
+
+        function requestDownload(docIndex) {
+            if (!window.clientData || !window.clientData.documentos[docIndex]) {
+                alert('Documento no encontrado');
+                return;
+            }
+            
+            pendingDownload = window.clientData.documentos[docIndex];
+            
+            // Show modal
+            document.getElementById('modalDocumentName').textContent = pendingDownload.nombre;
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordModal').classList.add('active');
+            
+            // Focus input
+            setTimeout(() => {
+                document.getElementById('passwordInput').focus();
+            }, 300);
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+            pendingDownload = null;
+        }
+
+        function handlePasswordKeypress(event) {
+            if (event.key === 'Enter') {
+                verifyAndDownload();
+            }
+        }
+
+        function verifyAndDownload() {
+            const inputPassword = document.getElementById('passwordInput').value.trim();
+            
+            if (!inputPassword) {
+                alert('Por favor ingresa tu contraseña');
+                return;
+            }
+            
+            if (!window.clientData || !window.clientData.password) {
+                alert('Error: No se pudo verificar la contraseña');
+                return;
+            }
+            
+            // Verify password
+            if (inputPassword === window.clientData.password) {
+                console.log('✅ Contraseña correcta');
+                console.log('📦 Pending download:', pendingDownload);
+                closePasswordModal();
+                
+                // Download file
+                if (pendingDownload && pendingDownload.url) {
+                    console.log('📥 Descargando desde:', pendingDownload.url);
+                    downloadFile(pendingDownload.url, pendingDownload.nombre);
+                } else {
+                    console.error('❌ Error: pendingDownload =', pendingDownload);
+                    if (pendingDownload) {
+                        console.error('❌ URL está vacía o undefined:', pendingDownload.url);
+                    }
+                    alert('URL del documento no disponible.\n\nRevisa la consola (F12) para más detalles.');
+                }
+            } else {
+                alert('❌ Contraseña incorrecta. Por favor verifica tu documento físico.');
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        function downloadFile(url, filename) {
+            console.log('📥 Descargando:', filename);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            alert('✅ Descarga iniciada: ' + filename);
+        }
+
+        function previewDocument(docIndex) {
+            if (!window.clientData || !window.clientData.documentos[docIndex]) {
+                alert('Documento no encontrado');
+                return;
