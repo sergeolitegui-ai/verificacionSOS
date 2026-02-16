@@ -1,0 +1,2848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Ing. Sergeo Olivera Sagastegui | Inmobiliaria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a2463;
+            --secondary: #3e92cc;
+            --accent: #1e6091;
+            --light: #f0f4f8;
+            --white: #ffffff;
+            --text: #1a1a2e;
+            --text-light: #4a5568;
+            --gold-accent: #d4af37;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Varela Round', sans-serif;
+            color: var(--text);
+            background: var(--light);
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: transparent;
+            z-index: 1000;
+            padding: 0.8rem 2rem;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-button svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .user-button:hover {
+            border-color: var(--secondary);
+            background: white;
+        }
+
+        .user-button:hover svg {
+            color: var(--secondary);
+        }
+
+        .logo {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1.26rem;
+            font-weight: 700;
+            color: #0a1929;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: flex-end;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+        }
+
+        .logo span {
+            color: #0a1929;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #b8941f 0%, #d4af37 50%, #b8941f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-right: 0.3rem;
+            font-size: 4.2rem;
+            display: inline-block;
+            vertical-align: baseline;
+            line-height: 1;
+            font-weight: 600;
+        }
+
+        .logo-full {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .logo-full .logo-icon {
+            margin-bottom: -0.15rem;
+        }
+
+        .logo-full-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+        }
+
+        .logo-full-ing {
+            font-size: 0.76rem;
+            line-height: 1;
+        }
+
+        .logo-full-name {
+            font-size: 1.26rem;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .logo-tagline {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: #666;
+            margin-top: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-short {
+            display: none;
+        }
+
+        .logo-short-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+        }
+
+        .logo-short-ing {
+            display: block;
+            font-size: 0.55rem;
+            line-height: 1;
+        }
+
+        .logo-short-sos {
+            display: block;
+            font-size: 1.5rem;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .logo-tagline-mobile {
+            font-size: 0.45rem;
+            font-weight: 400;
+            color: #666;
+            margin-top: 0;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .nav-links {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem 0;
+            min-width: 180px;
+            list-style: none;
+            z-index: 1000;
+        }
+
+        .nav-links.mobile-active {
+            display: block;
+        }
+
+        .nav-links li {
+            padding: 0;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: var(--light);
+            color: var(--secondary);
+            padding-left: 2rem;
+        }
+
+        .nav-links a:hover .menu-icon {
+            color: var(--secondary);
+        }
+
+        .nav-links a::after {
+            display: none;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: white;
+        }
+
+        .nav-button:hover .nav-icon {
+            opacity: 0.6;
+        }
+
+        .nav-icon {
+            width: 28px;
+            height: 28px;
+            transition: opacity 0.3s ease;
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: url('images/hero-background.webp');
+            background-size: cover;
+            background-position: center 60%;
+            background-repeat: no-repeat;
+            padding: 8rem 2rem 3rem;
+            margin-top: 0;
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            min-height: 60vh;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            color: #1a1a2e;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: #2a2a3e;
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-search {
+            background: white;
+            border-radius: 50px;
+            padding: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-search input {
+            flex: 1;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            font-size: 0.95rem;
+            outline: none;
+            font-family: 'Varela Round', sans-serif;
+            color: var(--text);
+        }
+
+        .hero-search input::placeholder {
+            color: var(--text-light);
+        }
+
+        .hero-search-button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Varela Round', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero-search-button:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .hero-filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-filter-button {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            color: #1a1a2e;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Varela Round', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero-filter-button:hover,
+        .hero-filter-button.active {
+            background: white;
+            color: var(--secondary);
+            border-color: white;
+        }
+
+        .hero-filter-button svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 7rem 1.5rem 2rem;
+                min-height: 45vh;
+                background-size: cover;
+                background-position: center 55%;
+                background-repeat: no-repeat;
+            }
+
+            .hero-title {
+                font-size: 1.6rem !important;
+            }
+
+            .hero-subtitle {
+                font-size: 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero-search {
+                flex-direction: row;
+                border-radius: 50px;
+                padding: 0.3rem;
+            }
+
+            .hero-search input {
+                flex: 1;
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .hero-search-button {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                padding: 0;
+                border-radius: 50%;
+                justify-content: center;
+            }
+
+            .hero-search-button svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* Hide text, show only icon */
+            .hero-search-button-text {
+                display: none;
+            }
+
+            .hero-filters {
+                gap: 0.5rem;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+
+            .hero-filter-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .hero-filter-button svg {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        /* Property Feed Section */
+        .property-feed {
+            margin-top: 0;
+            padding: 1.5rem 2rem 3rem;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .feed-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feed-card {
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: fadeInCard 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .feed-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feed-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .feed-card:hover .feed-image {
+            transform: scale(1.05);
+        }
+
+        .feed-image-container {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .feed-carousel {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+        }
+
+        .feed-carousel-track {
+            display: flex;
+            transition: transform 0.4s ease;
+            height: 100%;
+        }
+
+        .feed-carousel-slide {
+            min-width: 100%;
+            height: 100%;
+        }
+
+        .feed-carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .feed-carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+            opacity: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .feed-card:hover .feed-carousel-arrow {
+            opacity: 1;
+        }
+
+        .feed-carousel-arrow:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .feed-carousel-arrow-left {
+            left: 10px;
+        }
+
+        .feed-carousel-arrow-right {
+            right: 10px;
+        }
+
+        .feed-carousel-arrow svg {
+            width: 16px;
+            height: 16px;
+            color: #222;
+        }
+
+        .feed-carousel-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .feed-carousel-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 0;
+        }
+
+        .feed-carousel-dot.active {
+            background: white;
+            width: 8px;
+            height: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .feed-carousel {
+                height: 240px;
+            }
+
+            .feed-carousel-arrow {
+                opacity: 1;
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        .feed-status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 8px;
+        }
+
+        .feed-status.disponible {
+            background: #14B8A6;
+        }
+
+        .feed-status.exclusiva {
+            background: #F59E0B;
+        }
+
+        .feed-status.nueva {
+            background: #3B82F6;
+        }
+
+        .feed-status.reservado {
+            background: #F97316;
+        }
+
+        .feed-like-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .feed-like-button:hover {
+            transform: scale(1.15);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .feed-like-button:active {
+            transform: scale(0.9);
+        }
+
+        .feed-like-icon {
+            width: 26px;
+            height: 26px;
+            color: white;
+            stroke-width: 2.5;
+            transition: all 0.3s ease;
+            fill: none;
+        }
+
+        .feed-like-button.liked .feed-like-icon {
+            color: #ff385c !important;
+            fill: #ff385c !important;
+            stroke: #ff385c !important;
+            animation: heartPulse 0.4s ease;
+        }
+
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1.1); }
+            75% { transform: scale(1.25); }
+        }
+
+        .feed-info {
+            padding: 1.5rem;
+        }
+
+        .feed-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feed-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feed-location {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .location-icon {
+            width: 16px;
+            height: 16px;
+            color: var(--text-light);
+        }
+
+        .feed-features {
+            display: flex;
+            gap: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e8e8e8;
+            font-size: 0.85rem;
+        }
+
+        .feed-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-light);
+        }
+
+        .feature-icon {
+            width: 18px;
+            height: 18px;
+            color: var(--text-light);
+        }
+
+        .feed-feature strong {
+            color: var(--primary);
+        }
+
+        .feed-metrics {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            margin-top: 1rem;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .feed-metric {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .feed-metric:hover {
+            transform: scale(1.1);
+        }
+
+        .feed-metric-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .feed-metric.liked .heart-icon {
+            color: #ff385c;
+            fill: #ff385c;
+            animation: heartBeat 0.3s ease;
+        }
+
+        .feed-metric-count {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1.1); }
+            75% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .share-menu {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 0.8rem;
+            margin-bottom: 10px;
+            z-index: 100;
+            min-width: 180px;
+        }
+
+        .share-menu.active {
+            display: block;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.7rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .share-option:hover {
+            background: var(--light);
+        }
+
+        .share-option-icon {
+            font-size: 1.3rem;
+        }
+
+        .feed-map-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            background: var(--secondary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .feed-map-button:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(62, 146, 204, 0.3);
+        }
+
+        .feed-map-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .map-preview {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            z-index: 1000;
+            width: 280px;
+        }
+
+        .feed-map-button {
+            position: relative;
+        }
+
+        .feed-map-button:hover .map-preview {
+            display: block;
+            animation: fadeInMap 0.3s ease;
+        }
+
+        .feed-map-button.show-preview .map-preview {
+            display: block;
+            animation: fadeInMap 0.3s ease;
+        }
+
+        @keyframes fadeInMap {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .map-preview iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .map-preview-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .map-preview::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--white);
+            padding: 3rem 2rem;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+        }
+
+        .filter-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e8e8e8;
+            background: var(--light);
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: var(--white);
+        }
+
+        .filter-button {
+            padding: 0.9rem 2.5rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            border-radius: 2px;
+            margin-top: 1.8rem;
+        }
+
+        .filter-button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Properties Section */
+        .properties {
+            max-width: 1400px;
+            margin: 4rem auto;
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--secondary);
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .property-card {
+            background: var(--white);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .property-card:hover .property-image {
+            transform: scale(1.08);
+        }
+
+        .property-image-container {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .property-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        .property-info {
+            padding: 2rem;
+        }
+
+        .property-price {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .property-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-location {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .property-features {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e8e8e8;
+            font-size: 0.9rem;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .feature strong {
+            color: var(--primary);
+        }
+
+        /* About Section */
+        .about {
+            background: var(--primary);
+            color: var(--white);
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(62, 146, 204, 0.15), transparent);
+        }
+
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about h2 {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .about p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            max-width: 800px;
+            margin: 6rem auto;
+            padding: 2rem;
+        }
+
+        .contact h2 {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary);
+        }
+
+        .contact-form {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e8e8e8;
+            background: var(--light);
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: var(--white);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--secondary);
+            color: var(--white);
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        .submit-button:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(62, 146, 204, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: var(--white);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo-full {
+                display: none;
+            }
+
+            .logo-short {
+                display: flex;
+                align-items: flex-end;
+                gap: 0.5rem;
+                margin-left: -0.5rem;
+            }
+
+            .logo-short .logo-icon {
+                margin-right: 0.3rem;
+                margin-bottom: -0.15rem;
+                line-height: 1;
+                font-size: 3.2rem;
+            }
+
+            .logo-short-container {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0;
+            }
+
+            .logo-short-ing {
+                margin-bottom: 0;
+                line-height: 0.9;
+            }
+
+            .nav-links {
+                right: 10px;
+                min-width: 160px;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+                padding: 0.7rem 1.2rem;
+            }
+
+            .nav-links a:hover {
+                padding-left: 1.8rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .feed-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .feed-image {
+                height: 240px;
+            }
+
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-container {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* Login Modal */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .login-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+        }
+
+        .login-modal-content {
+            position: relative;
+            background: white;
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            font-size: 2rem;
+            color: #999;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .login-modal-close:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .login-modal-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #b8941f 0%, #d4af37 50%, #b8941f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            filter: drop-shadow(0 2px 4px rgba(184, 148, 31, 0.3));
+        }
+
+        .login-modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-modal-subtitle {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .login-google-button {
+            width: 100%;
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        .login-google-button:hover {
+            background: #f8f9fa;
+            border-color: #4285F4;
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+        }
+
+        .google-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .login-benefits {
+            margin-top: 2rem;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .login-benefit {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .benefit-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .login-modal-content {
+                padding: 2.5rem 1.5rem;
+                width: 95%;
+            }
+
+            .login-modal-title {
+                font-size: 1.5rem;
+            }
+
+            .login-modal-subtitle {
+                font-size: 0.9rem;
+            }
+        }
+
+    </style>
+    <!-- Firebase SDK v9 (Modular) -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, doc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration - UPDATED
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYHXbX2Ra8RMF_un8N610jEjsDn9Rvw0U",
+            authDomain: "verificacionsos-d55a6.firebaseapp.com",
+            projectId: "verificacionsos-d55a6",
+            storageBucket: "verificacionsos-d55a6.firebasestorage.app",
+            messagingSenderId: "17499432341",
+            appId: "1:17499432341:web:147e6abbc7b3dff3fb829c",
+            measurementId: "G-RGWGTE1Q4V"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Google Sign-In Provider
+        const googleProvider = new GoogleAuthProvider();
+        googleProvider.setCustomParameters({
+            prompt: 'select_account'
+        });
+
+        // Make available globally
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseGoogleProvider = googleProvider;
+        window.currentUser = null;
+
+        // Auth state listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.currentUser = user;
+                console.log('✅ Usuario logueado:', user.displayName, user.email);
+                if (typeof window.updateUIForLoggedInUser === 'function') {
+                    window.updateUIForLoggedInUser(user);
+                }
+            } else {
+                window.currentUser = null;
+                console.log('❌ No hay usuario logueado');
+                if (typeof window.updateUIForLoggedOutUser === 'function') {
+                    window.updateUIForLoggedOutUser();
+                }
+            }
+        });
+
+        console.log('🔥 Firebase v9 inicializado correctamente');
+
+        // Make functions globally available
+        window.firebaseSignInWithPopup = signInWithPopup;
+        window.firebaseSetDoc = setDoc;
+        window.firebaseDeleteDoc = deleteDoc;
+        window.firebaseServerTimestamp = serverTimestamp;
+        window.firebaseDoc = doc;
+        window.firebaseCollection = collection;
+    </script>
+
+    <script>
+        // Update UI for logged in user
+        window.updateUIForLoggedInUser = function(user) {
+            // TODO: Update header with user info
+            if (typeof closeLoginModal === 'function') {
+                closeLoginModal();
+            }
+        }
+
+        // Update UI for logged out user
+        window.updateUIForLoggedOutUser = function() {
+            // TODO: Reset UI to logged out state
+        }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="/" class="logo" onclick="window.location.reload(); return false;">
+                <span class="logo-full">
+                    <span class="logo-icon">⚜</span>
+                    <span class="logo-full-container">
+                        <span class="logo-full-ing">Ing.</span>
+                        <span class="logo-full-name"><span>Sergeo Olivera</span> Sagastegui</span>
+                        <span class="logo-tagline">Verificación SOS</span>
+                    </span>
+                </span>
+                <span class="logo-short">
+                    <span class="logo-icon">⚜</span>
+                    <span class="logo-short-container">
+                        <span class="logo-short-ing">Verificación</span>
+                        <span class="logo-short-sos"><span>SOS</span></span>
+                        <span class="logo-tagline-mobile">por el Ing. Sergeo Olivera Sagastegui</span>
+                    </span>
+                </span>
+            </a>
+            <div class="nav-actions">
+                <button class="user-button" onclick="alert('Funcionalidad de login próximamente')">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="nav-button" onclick="toggleNavMenu()">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="4" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="13" cy="6" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <line x1="16" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <line x1="4" y1="12" x2="7" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="10" cy="12" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <line x1="13" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <line x1="4" y1="18" x2="13" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="16" cy="18" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <line x1="19" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li>
+                    <a href="#urbano">
+                        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3M9 9h.01M9 12h.01M9 15h.01M9 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Urbano
+                    </a>
+                </li>
+                <li>
+                    <a href="#rural">
+                        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L7 9h10L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M12 7L6 14h12L12 7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M12 12L5 19h14L12 12z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <line x1="12" y1="19" x2="12" y2="22" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>
+                        Rural
+                    </a>
+                </li>
+                <li>
+                    <a href="#lotificacion">
+                        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                            <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                            <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                            <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Lotificación
+                    </a>
+                </li>
+                <li>
+                    <a href="#sunarp">
+                        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Sunarp
+                    </a>
+                </li>
+            </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Solo Propiedades Verificadas</h1>
+            <p class="hero-subtitle">Tu patrimonio merece una decisión segura. Empieza hoy.</p>
+            
+            <div class="hero-search">
+                <svg style="width: 24px; height: 24px; color: #999; margin-left: 1rem;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                    <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input type="text" placeholder="Buscar ciudad, zona o propiedad..." id="heroSearch">
+                <button class="hero-search-button" onclick="performSearch()">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="hero-search-button-text">Buscar</span>
+                </button>
+            </div>
+
+            <div class="hero-filters">
+                <button class="hero-filter-button active" onclick="filterByType('terrenos')">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 21h18M5 21V7l7-4v18M19 21V11l-7-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Terrenos
+                </button>
+                <button class="hero-filter-button" onclick="filterByType('casas')">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 21h18M4 21V9l8-6 8 6v12M9 21v-7h6v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Casas
+                </button>
+                <button class="hero-filter-button" onclick="filterByType('departamentos')">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path d="M4 12h16M12 4v16" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Departamentos
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Feed Section -->
+    <section class="property-feed" id="inicio">
+        <div class="feed-container">
+            <!-- Property Feed Cards will be inserted here by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label>Tipo de Propiedad</label>
+                <select id="filterType">
+                    <option value="todos">Todos</option>
+                    <option value="casa">Casa</option>
+                    <option value="apartamento">Apartamento</option>
+                    <option value="terreno">Terreno</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Precio Máximo</label>
+                <input type="number" id="filterPrice" placeholder="$500,000">
+            </div>
+            <div class="filter-group">
+                <label>Ubicación</label>
+                <select id="filterLocation">
+                    <option value="todos">Todas</option>
+                    <option value="centro">Centro</option>
+                    <option value="norte">Zona Norte</option>
+                    <option value="sur">Zona Sur</option>
+                </select>
+            </div>
+            <button class="filter-button" onclick="filterProperties()">Buscar</button>
+        </div>
+    </section>
+
+    <!-- Properties Section -->
+    <section class="properties" id="propiedades">
+        <h2 class="section-title">Propiedades Destacadas</h2>
+        <div class="property-grid" id="propertyGrid">
+            <!-- Properties will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="nosotros">
+        <div class="about-content">
+            <h2>Sobre Nosotros</h2>
+            <p>Con más de 15 años de experiencia en el mercado inmobiliario, nos especializamos en conectar a nuestros clientes con las propiedades de sus sueños.</p>
+            <p>Nuestro equipo de expertos está comprometido con brindar un servicio personalizado, transparente y de la más alta calidad en cada etapa del proceso.</p>
+            <p>Tu satisfacción es nuestra prioridad. Creemos que encontrar el hogar perfecto es más que una transacción, es el inicio de una nueva historia.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contacto">
+        <h2>Contáctanos</h2>
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="name">Nombre Completo</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Mensaje</label>
+                <textarea id="message" required></textarea>
+            </div>
+            <button type="submit" class="submit-button">ENVIAR MENSAJE</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#inicio">Inicio</a>
+                <a href="#propiedades">Propiedades</a>
+                <a href="#nosotros">Nosotros</a>
+                <a href="#contacto">Contacto</a>
+            </div>
+            <p>&copy; 2024 Ing. Sergeo Olivera Sagastegui - Inmobiliaria. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleNavMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('mobile-active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navLinks = document.getElementById('navLinks');
+            const navButton = document.querySelector('.nav-button');
+            
+            if (!navLinks.contains(event.target) && !navButton.contains(event.target)) {
+                navLinks.classList.remove('mobile-active');
+            }
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navLinks = document.getElementById('navLinks');
+                navLinks.classList.remove('mobile-active');
+            });
+        });
+
+        // Sample property data
+        const properties = [
+            {
+                id: 1,
+                type: 'rural',
+                price: 64000,
+                currency: 'PEN',
+                title: 'Yanamarca',
+                location: 'Yanamarca - Llacanora',
+                district: 'Llacanora',
+                province: 'Cajamarca',
+                department: 'Cajamarca',
+                locationKey: 'rural',
+                images: ['images/1-1.webp', 'images/1-2.webp', 'images/1-3.webp', 'images/1-4.webp', 'images/1-5.webp'],
+                bedrooms: null,
+                bathrooms: null,
+                area: 438,
+                status: 'DISPONIBLE',
+                coordinates: {
+                    lat: -7.222635,
+                    lng: -78.424366
+                },
+                coordinatesUTM: {
+                    este: 784438.56,
+                    norte: 9200837.72,
+                    zona: '17S',
+                    epsg: '32717'
+                },
+                services: {
+                    agua: true,
+                    luz: true,
+                    desague: false,
+                    internet: false
+                },
+                sunarp: {
+                    registered: true,
+                    partida: '02226166'
+                }
+            },
+            {
+                id: 2,
+                type: 'apartamento',
+                price: 280000,
+                currency: 'USD',
+                title: 'Apartamento de Lujo Centro',
+                location: 'Centro',
+                locationKey: 'centro',
+                images: ['images/2-1.webp', 'images/2-2.webp', 'images/2-3.webp', 'images/2-4.webp', 'images/2-5.webp'],
+                bedrooms: 2,
+                bathrooms: 2,
+                area: 120,
+                status: 'DISPONIBLE',
+                coordinates: {
+                    lat: -9.9251,
+                    lng: -76.2412
+                }
+            },
+            {
+                id: 3,
+                type: 'casa',
+                price: 650000,
+                currency: 'USD',
+                title: 'Casa Colonial Restaurada',
+                location: 'Centro Histórico',
+                locationKey: 'centro',
+                images: ['images/3-1.webp', 'images/3-2.webp', 'images/3-3.webp', 'images/3-4.webp', 'images/3-5.webp'],
+                bedrooms: 5,
+                bathrooms: 4,
+                area: 450,
+                status: 'EXCLUSIVA',
+                coordinates: {
+                    lat: -9.9264,
+                    lng: -76.2405
+                }
+            },
+            {
+                id: 4,
+                type: 'apartamento',
+                price: 195000,
+                currency: 'USD',
+                title: 'Penthouse con Vista Panorámica',
+                location: 'Zona Sur',
+                locationKey: 'sur',
+                images: ['images/4-1.webp', 'images/4-2.webp', 'images/4-3.webp', 'images/4-4.webp', 'images/4-5.webp'],
+                bedrooms: 3,
+                bathrooms: 2,
+                area: 180,
+                status: 'NUEVA',
+                coordinates: {
+                    lat: -9.9380,
+                    lng: -76.2450
+                }
+            },
+            {
+                id: 5,
+                type: 'terreno',
+                price: 120000,
+                currency: 'USD',
+                title: 'Terreno Residencial Premium',
+                location: 'Zona Norte',
+                locationKey: 'norte',
+                images: ['images/5-1.webp', 'images/5-2.webp', 'images/5-3.webp', 'images/5-4.webp', 'images/5-5.webp'],
+                bedrooms: null,
+                bathrooms: null,
+                area: 500,
+                status: 'DISPONIBLE',
+                coordinates: {
+                    lat: -9.9295,
+                    lng: -76.2438
+                }
+            },
+            {
+                id: 6,
+                type: 'casa',
+                price: 380000,
+                currency: 'USD',
+                title: 'Casa Moderna con Jardín',
+                location: 'Zona Sur',
+                locationKey: 'sur',
+                images: ['images/6-1.webp', 'images/6-2.webp', 'images/6-3.webp', 'images/6-4.webp', 'images/6-5.webp'],
+                bedrooms: 3,
+                bathrooms: 2,
+                area: 250,
+                status: 'DISPONIBLE',
+                coordinates: {
+                    lat: -9.9356,
+                    lng: -76.2468
+                }
+            }
+        ];
+
+        // Render property feed
+        function renderPropertyFeed(propertiesToRender = properties) {
+            const feedContainer = document.querySelector('.feed-container');
+            feedContainer.innerHTML = ''; // Clear existing
+            
+            propertiesToRender.forEach((property, index) => {
+                const card = document.createElement('div');
+                card.className = 'feed-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                let featuresHTML = '';
+                if (property.bedrooms) {
+                    featuresHTML = `
+                        <div class="feed-features">
+                            <div class="feed-feature">
+                                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 20v-8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8M3 12V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    <circle cx="7" cy="8" r="1" fill="currentColor"/>
+                                </svg>
+                                <span><strong>${property.bedrooms}</strong> Hab.</span>
+                            </div>
+                            <div class="feed-feature">
+                                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 6L9 3M15 6L15 3M9 6a3 3 0 1 0 6 0M9 6h6M3 12h18M5 12v9h14v-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span><strong>${property.bathrooms}</strong> Baños</span>
+                            </div>
+                            <div class="feed-feature">
+                                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Tripod base - more prominent -->
+                                    <path d="M4 22L10.5 11M20 22L13.5 11M12 22V11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <!-- Central mounting point -->
+                                    <circle cx="12" cy="11" r="1.5" fill="currentColor"/>
+                                    <!-- Vertical column -->
+                                    <line x1="12" y1="11" x2="12" y2="6" stroke="currentColor" stroke-width="2.5"/>
+                                    <!-- Theodolite head - larger and more defined -->
+                                    <rect x="8.5" y="3" width="7" height="4.5" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <!-- Telescope - more prominent -->
+                                    <line x1="15.5" y1="5.2" x2="19" y2="5.2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <!-- Lens circle -->
+                                    <circle cx="19" cy="5.2" r="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <!-- Level bubble - center -->
+                                    <circle cx="12" cy="5.2" r="1.2" fill="currentColor"/>
+                                </svg>
+                                <span><strong>${property.area}</strong> m²</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    featuresHTML = `
+                        <div class="feed-features">
+                            <div class="feed-feature">
+                                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Tripod base - more prominent -->
+                                    <path d="M4 22L10.5 11M20 22L13.5 11M12 22V11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <!-- Central mounting point -->
+                                    <circle cx="12" cy="11" r="1.5" fill="currentColor"/>
+                                    <!-- Vertical column -->
+                                    <line x1="12" y1="11" x2="12" y2="6" stroke="currentColor" stroke-width="2.5"/>
+                                    <!-- Theodolite head - larger and more defined -->
+                                    <rect x="8.5" y="3" width="7" height="4.5" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <!-- Telescope - more prominent -->
+                                    <line x1="15.5" y1="5.2" x2="19" y2="5.2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                    <!-- Lens circle -->
+                                    <circle cx="19" cy="5.2" r="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <!-- Level bubble - center -->
+                                    <circle cx="12" cy="5.2" r="1.2" fill="currentColor"/>
+                                </svg>
+                                <span><strong>${property.area}</strong> m²</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="feed-image-container">
+                        <div class="feed-carousel" id="carousel-${property.id}">
+                            <div class="feed-carousel-track">
+                                ${property.images.map((img, i) => `
+                                    <div class="feed-carousel-slide">
+                                        <img src="${img}" alt="${property.title} - Foto ${i + 1}" loading="lazy">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button class="feed-carousel-arrow feed-carousel-arrow-left" onclick="carouselPrev(event, ${property.id})">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button class="feed-carousel-arrow feed-carousel-arrow-right" onclick="carouselNext(event, ${property.id})">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <div class="feed-carousel-dots">
+                                ${property.images.map((_, i) => `
+                                    <button class="feed-carousel-dot ${i === 0 ? 'active' : ''}" onclick="carouselGoTo(event, ${property.id}, ${i})"></button>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="feed-status ${property.status.toLowerCase()}">${property.status}</div>
+                        <button class="feed-like-button" onclick="toggleImageLike(event, ${property.id})" id="image-like-${property.id}">
+                            <svg class="feed-like-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="feed-info">
+                        <div class="feed-price">${property.currency === 'PEN' ? 'S/' : '$'}${property.price.toLocaleString()}</div>
+                        <h3 class="feed-title">${property.title}</h3>
+                        <div class="feed-location">
+                            <svg class="location-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>${property.location}</span>
+                        </div>
+                        ${featuresHTML}
+                        
+                        <div class="feed-metrics">
+                            <div class="feed-metric" onclick="toggleLike(${property.id})" id="like-${property.id}">
+                                <svg class="feed-metric-icon heart-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="feed-metric-count" id="like-count-${property.id}">0</span>
+                            </div>
+                            <div class="feed-metric">
+                                <svg class="feed-metric-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span class="feed-metric-count" id="view-count-${property.id}">0</span>
+                            </div>
+                            <div class="feed-metric" onclick="toggleShareMenu(event, ${property.id})" style="position: relative;">
+                                <svg class="feed-metric-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span class="feed-metric-count" id="share-count-${property.id}">0</span>
+                                <div class="share-menu" id="share-menu-${property.id}">
+                                    <div class="share-option" onclick="shareVia('whatsapp', ${property.id}, '${property.title.replace(/'/g, "\\'")}', ${property.coordinates.lat}, ${property.coordinates.lng})">
+                                        <span class="share-option-icon">💬</span>
+                                        <span>WhatsApp</span>
+                                    </div>
+                                    <div class="share-option" onclick="shareVia('facebook', ${property.id}, '${property.title.replace(/'/g, "\\'")}')">
+                                        <span class="share-option-icon">📘</span>
+                                        <span>Facebook</span>
+                                    </div>
+                                    <div class="share-option" onclick="shareVia('copy', ${property.id}, '${property.title.replace(/'/g, "\\'")}')">
+                                        <span class="share-option-icon">📋</span>
+                                        <span>Copiar enlace</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="feed-map-button" onclick="handleMapClick(event, ${property.coordinates.lat}, ${property.coordinates.lng}, '${property.title.replace(/'/g, "\\'")}', ${property.id})">
+                            <div class="map-preview">
+                                <div class="map-preview-title">${property.title}</div>
+                                <iframe
+                                    src="https://maps.google.com/maps?q=${property.coordinates.lat},${property.coordinates.lng}&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade">
+                                </iframe>
+                            </div>
+                            <svg class="feed-map-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Ver en Mapa
+                        </button>
+                    </div>
+                `;
+                
+                feedContainer.appendChild(card);
+            });
+        }
+
+        // Initial render of property feed
+        renderPropertyFeed();
+        
+        // Initialize metrics from localStorage
+        function initMetrics() {
+            properties.forEach(property => {
+                const metrics = getMetrics(property.id);
+                updateMetricDisplay(property.id, 'like', metrics.likes);
+                updateMetricDisplay(property.id, 'view', metrics.views);
+                updateMetricDisplay(property.id, 'share', metrics.shares);
+                
+                // Update like icon if already liked
+                if (metrics.liked) {
+                    // Update bottom like button
+                    const bottomLike = document.getElementById(`like-${property.id}`);
+                    if (bottomLike) {
+                        bottomLike.classList.add('liked');
+                        bottomLike.querySelector('.feed-metric-icon').textContent = '♥';
+                    }
+                    // Update image heart button
+                    const imageHeart = document.getElementById(`image-like-${property.id}`);
+                    if (imageHeart) {
+                        imageHeart.classList.add('liked');
+                    }
+                }
+            });
+        }
+
+        // Toggle like from image heart
+        function toggleImageLike(event, propertyId) {
+            event.stopPropagation();
+            event.preventDefault();
+            toggleLike(propertyId);
+        }
+
+        // Get metrics from localStorage
+        function getMetrics(propertyId) {
+            const stored = localStorage.getItem(`property-${propertyId}`);
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            return { likes: 0, views: 0, shares: 0, liked: false };
+        }
+
+        // Save metrics to localStorage
+        function saveMetrics(propertyId, metrics) {
+            localStorage.setItem(`property-${propertyId}`, JSON.stringify(metrics));
+        }
+
+        // Update metric display
+        function updateMetricDisplay(propertyId, type, count) {
+            const element = document.getElementById(`${type}-count-${propertyId}`);
+            if (element) {
+                element.textContent = count;
+            }
+        }
+
+        // Toggle like
+        function toggleLike(propertyId) {
+            const metrics = getMetrics(propertyId);
+            const likeElement = document.getElementById(`like-${propertyId}`);
+            const imageHeartElement = document.getElementById(`image-like-${propertyId}`);
+            
+            if (metrics.liked) {
+                // Unlike
+                metrics.liked = false;
+                metrics.likes = Math.max(0, metrics.likes - 1);
+                
+                // Update bottom like button
+                if (likeElement) {
+                    likeElement.classList.remove('liked');
+                }
+                
+                // Update image heart button
+                if (imageHeartElement) {
+                    imageHeartElement.classList.remove('liked');
+                }
+            } else {
+                // Like
+                metrics.liked = true;
+                metrics.likes += 1;
+                
+                // Update bottom like button
+                if (likeElement) {
+                    likeElement.classList.add('liked');
+                }
+                
+                // Update image heart button
+                if (imageHeartElement) {
+                    imageHeartElement.classList.add('liked');
+                }
+            }
+            
+            saveMetrics(propertyId, metrics);
+            updateMetricDisplay(propertyId, 'like', metrics.likes);
+        }
+
+        // Increment views
+        function incrementViews(propertyId) {
+            const metrics = getMetrics(propertyId);
+            metrics.views += 1;
+            saveMetrics(propertyId, metrics);
+            updateMetricDisplay(propertyId, 'view', metrics.views);
+        }
+
+        // Toggle share menu
+        function toggleShareMenu(event, propertyId) {
+            event.stopPropagation();
+            const menu = document.getElementById(`share-menu-${propertyId}`);
+            
+            // Close other menus
+            document.querySelectorAll('.share-menu.active').forEach(m => {
+                if (m !== menu) m.classList.remove('active');
+            });
+            
+            menu.classList.toggle('active');
+        }
+
+        // Share via platform
+        function shareVia(platform, propertyId, title) {
+            const metrics = getMetrics(propertyId);
+            metrics.shares += 1;
+            saveMetrics(propertyId, metrics);
+            updateMetricDisplay(propertyId, 'share', metrics.shares);
+            
+            const url = window.location.href;
+            const text = `Mira esta propiedad: ${title}`;
+            
+            switch(platform) {
+                case 'whatsapp':
+                    window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+                    break;
+                case 'facebook':
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+                    break;
+                case 'copy':
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert('¡Enlace copiado al portapapeles!');
+                    });
+                    break;
+            }
+            
+            // Close menu
+            document.getElementById(`share-menu-${propertyId}`).classList.remove('active');
+        }
+
+        // Close share menus when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.feed-metric')) {
+                document.querySelectorAll('.share-menu.active').forEach(menu => {
+                    menu.classList.remove('active');
+                });
+            }
+        });
+
+        // Initialize metrics on page load
+        setTimeout(initMetrics, 100);
+
+        // Login Modal Functions
+        function openLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+
+        // Google Login - Firebase v9
+        function loginWithGoogle() {
+            if (!window.firebaseAuth || !window.firebaseGoogleProvider) {
+                alert('Firebase aún se está cargando. Por favor espera un momento e intenta de nuevo.');
+                return;
+            }
+
+            window.firebaseSignInWithPopup(window.firebaseAuth, window.firebaseGoogleProvider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log('✅ Login exitoso:', user.displayName);
+                    
+                    // Save user to Firestore
+                    const userDoc = window.firebaseDoc(window.firebaseDb, 'users', user.uid);
+                    window.firebaseSetDoc(userDoc, {
+                        nombre: user.displayName,
+                        email: user.email,
+                        foto: user.photoURL,
+                        fecha_registro: window.firebaseServerTimestamp(),
+                        ultimo_login: window.firebaseServerTimestamp()
+                    }, { merge: true });
+                    
+                    // Close modal
+                    closeLoginModal();
+                    
+                    // Show success message
+                    alert(`¡Bienvenido, ${user.displayName}! 🎉\n\nAhora puedes guardar tus propiedades favoritas.`);
+                })
+                .catch((error) => {
+                    console.error('❌ Error en login:', error);
+                    if (error.code === 'auth/popup-closed-by-user') {
+                        return;
+                    }
+                    if (error.code === 'auth/unauthorized-domain') {
+                        alert('Este dominio no está autorizado en Firebase.\n\nPor favor agrega "' + window.location.hostname + '" a los dominios autorizados en Firebase Console.');
+                        return;
+                    }
+                    alert('Hubo un error al iniciar sesión. Por favor intenta de nuevo.');
+                });
+        }
+
+        // Modified toggleLike to require login and save to Firebase
+        function toggleLike(propertyId) {
+            // Check if user is logged in
+            if (!window.currentUser) {
+                openLoginModal();
+                return;
+            }
+            
+            // Get current metrics
+            const metrics = getMetrics(propertyId);
+            metrics.liked = !metrics.liked;
+            metrics.likes += metrics.liked ? 1 : -1;
+            saveMetrics(propertyId, metrics);
+            updateMetricDisplay(propertyId, 'like', metrics.likes);
+            
+            // Update UI
+            const bottomLike = document.getElementById(`like-${propertyId}`);
+            const imageHeart = document.getElementById(`image-like-${propertyId}`);
+            
+            if (metrics.liked) {
+                if (bottomLike) {
+                    bottomLike.classList.add('liked');
+                    bottomLike.querySelector('.feed-metric-icon').textContent = '♥';
+                }
+                if (imageHeart) imageHeart.classList.add('liked');
+                
+                // Save favorite to Firebase
+                if (window.firebaseDb && window.currentUser) {
+                    const favDoc = window.firebaseDoc(window.firebaseDb, 'users', window.currentUser.uid, 'favoritos', propertyId.toString());
+                    window.firebaseSetDoc(favDoc, {
+                        propertyId: propertyId,
+                        fecha: window.firebaseServerTimestamp()
+                    });
+                }
+            } else {
+                if (bottomLike) {
+                    bottomLike.classList.remove('liked');
+                    bottomLike.querySelector('.feed-metric-icon').textContent = '♡';
+                }
+                if (imageHeart) imageHeart.classList.remove('liked');
+                
+                // Remove favorite from Firebase
+                if (window.firebaseDb && window.currentUser) {
+                    const favDoc = window.firebaseDoc(window.firebaseDb, 'users', window.currentUser.uid, 'favoritos', propertyId.toString());
+                    window.firebaseDeleteDoc(favDoc);
+                }
+            }
+        }
+
+        // Hero search functionality
+        function performSearch() {
+            const searchValue = document.getElementById('heroSearch').value.toLowerCase();
+            if (!searchValue) return;
+            
+            const filtered = properties.filter(property => 
+                property.title.toLowerCase().includes(searchValue) ||
+                property.location.toLowerCase().includes(searchValue) ||
+                property.type.toLowerCase().includes(searchValue)
+            );
+            
+            renderPropertyFeed(filtered);
+            
+            // Scroll to results
+            document.querySelector('.property-feed').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Hero filter by type
+        function filterByType(type) {
+            // Update active button
+            document.querySelectorAll('.hero-filter-button').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.hero-filter-button').classList.add('active');
+            
+            let filtered = properties;
+            if (type === 'terrenos') {
+                filtered = properties.filter(p => p.type === 'terreno' || p.type === 'rural');
+            } else if (type === 'casas') {
+                filtered = properties.filter(p => p.type === 'casa');
+            } else if (type === 'departamentos') {
+                filtered = properties.filter(p => p.type === 'apartamento');
+            }
+            
+            renderPropertyFeed(filtered);
+            
+            // Scroll to results
+            document.querySelector('.property-feed').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Allow enter key in search
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('heroSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+            }
+        });
+
+        // Carousel functionality
+        const carouselStates = {};
+        
+        // Initialize carousel states
+        properties.forEach(property => {
+            carouselStates[property.id] = { currentIndex: 0, totalSlides: property.images.length };
+        });
+
+        function carouselPrev(event, propertyId) {
+            event.stopPropagation();
+            const state = carouselStates[propertyId];
+            state.currentIndex = (state.currentIndex - 1 + state.totalSlides) % state.totalSlides;
+            updateCarousel(propertyId);
+        }
+
+        function carouselNext(event, propertyId) {
+            event.stopPropagation();
+            const state = carouselStates[propertyId];
+            state.currentIndex = (state.currentIndex + 1) % state.totalSlides;
+            updateCarousel(propertyId);
+        }
+
+        function carouselGoTo(event, propertyId, index) {
+            event.stopPropagation();
+            carouselStates[propertyId].currentIndex = index;
+            updateCarousel(propertyId);
+        }
+
+        function updateCarousel(propertyId) {
+            const carousel = document.getElementById(`carousel-${propertyId}`);
+            const track = carousel.querySelector('.feed-carousel-track');
+            const dots = carousel.querySelectorAll('.feed-carousel-dot');
+            const state = carouselStates[propertyId];
+            
+            track.style.transform = `translateX(-${state.currentIndex * 100}%)`;
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === state.currentIndex);
+            });
+        }
+
+        // Touch/swipe support for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousels = document.querySelectorAll('.feed-carousel');
+            
+            carousels.forEach(carousel => {
+                let startX = 0;
+                let isDragging = false;
+                const propertyId = parseInt(carousel.id.split('-')[1]);
+                
+                carousel.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    isDragging = true;
+                }, { passive: true });
+                
+                carousel.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                }, { passive: true });
+                
+                carousel.addEventListener('touchend', (e) => {
+                    if (!isDragging) return;
+                    const endX = e.changedTouches[0].clientX;
+                    const diff = startX - endX;
+                    
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) {
+                            // Swipe left - next
+                            const state = carouselStates[propertyId];
+                            state.currentIndex = (state.currentIndex + 1) % state.totalSlides;
+                            updateCarousel(propertyId);
+                        } else {
+                            // Swipe right - prev
+                            const state = carouselStates[propertyId];
+                            state.currentIndex = (state.currentIndex - 1 + state.totalSlides) % state.totalSlides;
+                            updateCarousel(propertyId);
+                        }
+                    }
+                    isDragging = false;
+                }, { passive: true });
+            });
+        });
+
+        // Function to open map
+        function openMap(lat, lng, title) {
+            const encodedTitle = encodeURIComponent(title);
+            const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${encodedTitle}`;
+            window.open(url, '_blank');
+        }
+
+        // Handle map click with mobile-friendly behavior
+        function handleMapClick(event, lat, lng, title, propertyId) {
+            const button = event.currentTarget;
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Mobile: First tap shows preview, second tap opens map
+                if (button.classList.contains('show-preview')) {
+                    // Second tap - open map and increment views
+                    incrementViews(propertyId);
+                    openMap(lat, lng, title);
+                    button.classList.remove('show-preview');
+                } else {
+                    // First tap - show preview
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    // Close any other open previews
+                    document.querySelectorAll('.feed-map-button.show-preview').forEach(btn => {
+                        if (btn !== button) btn.classList.remove('show-preview');
+                    });
+                    
+                    button.classList.add('show-preview');
+                    // Increment views when preview is shown
+                    incrementViews(propertyId);
+                }
+            } else {
+                // Desktop: Direct click opens map (hover shows preview)
+                incrementViews(propertyId);
+                openMap(lat, lng, title);
+            }
+        }
+
+        // Close map preview when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.feed-map-button')) {
+                document.querySelectorAll('.feed-map-button.show-preview').forEach(btn => {
+                    btn.classList.remove('show-preview');
+                });
+            }
+        });
+
+        // Render properties
+        function renderProperties(propertiesToShow = properties) {
+            const grid = document.getElementById('propertyGrid');
+            grid.innerHTML = '';
+
+            propertiesToShow.forEach((property, index) => {
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                let featuresHTML = '';
+                if (property.bedrooms) {
+                    featuresHTML = `
+                        <div class="property-features">
+                            <div class="feature">
+                                <span>🛏️</span>
+                                <span><strong>${property.bedrooms}</strong> Hab.</span>
+                            </div>
+                            <div class="feature">
+                                <span>🚿</span>
+                                <span><strong>${property.bathrooms}</strong> Baños</span>
+                            </div>
+                            <div class="feature">
+                                <span>📐</span>
+                                <span><strong>${property.area}</strong> m²</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    featuresHTML = `
+                        <div class="property-features">
+                            <div class="feature">
+                                <span>📐</span>
+                                <span><strong>${property.area}</strong> m²</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="property-image-container">
+                        <img src="${property.image}" alt="${property.title}" class="property-image">
+                        <div class="property-status">${property.status}</div>
+                    </div>
+                    <div class="property-info">
+                        <div class="property-price">${property.currency === 'PEN' ? 'S/' : '$'}${property.price.toLocaleString()}</div>
+                        <h3 class="property-title">${property.title}</h3>
+                        <div class="property-location">
+                            <span>📍</span>
+                            <span>${property.location}</span>
+                        </div>
+                        ${featuresHTML}
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+
+            // Add fade-in animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInCard {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .property-card {
+                    animation: fadeInCard 0.6s ease-out forwards;
+                    opacity: 0;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Filter properties
+        function filterProperties() {
+            const type = document.getElementById('filterType').value;
+            const maxPrice = parseFloat(document.getElementById('filterPrice').value) || Infinity;
+            const location = document.getElementById('filterLocation').value;
+
+            const filtered = properties.filter(property => {
+                const typeMatch = type === 'todos' || property.type === type;
+                const priceMatch = property.price <= maxPrice;
+                const locationMatch = location === 'todos' || property.locationKey === location;
+                
+                return typeMatch && priceMatch && locationMatch;
+            });
+
+            renderProperties(filtered);
+        }
+
+        // Handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            alert('¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.');
+            event.target.reset();
+        }
+
+        // Initial render
+        renderProperties();
+
+        // Smooth scroll offset for fixed header
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                const offset = 80;
+                const targetPosition = target.offsetTop - offset;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-modal-overlay" onclick="closeLoginModal()"></div>
+        <div class="login-modal-content">
+            <button class="login-modal-close" onclick="closeLoginModal()">×</button>
+            
+            <div class="login-modal-icon">⚜</div>
+            
+            <h2 class="login-modal-title">Únete a Nuestra Comunidad</h2>
+            
+            <p class="login-modal-subtitle">
+                Guarda tus propiedades favoritas y accede a beneficios exclusivos
+            </p>
+            
+            <button class="login-google-button" onclick="loginWithGoogle()">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continuar con Google
+            </button>
+            
+            <div class="login-benefits">
+                <div class="login-benefit">
+                    <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 6L9 17l-5-5" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Guarda tus favoritos</span>
+                </div>
+                <div class="login-benefit">
+                    <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 6L9 17l-5-5" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Recibe alertas de nuevas propiedades</span>
+                </div>
+                <div class="login-benefit">
+                    <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 6L9 17l-5-5" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Accede a tus documentos</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
