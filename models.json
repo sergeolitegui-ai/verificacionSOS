@@ -1,0 +1,50 @@
+{
+  "models": [
+    {
+      "id": "yanamarca-2024",
+      "title": "Proyecto Valle Yanamarca",
+      "description": "Levantamiento topográfico con drone DJI Phantom 4 Pro. Reconstrucción 3D de 2,500 m² con precisión centimétrica.",
+      "modelPath": "models3d/yanamarca/modelo.glb",
+      "thumbnailPath": "models3d/yanamarca/thumbnail.jpg",
+      "location": "Valle Yanamarca, Cajamarca",
+      "area": "2,500 m²",
+      "date": "2024-01-15",
+      "userEmails": [
+        "cliente1@ejemplo.com",
+        "cliente2@ejemplo.com"
+      ]
+    },
+    {
+      "id": "hacienda-colpa-2024",
+      "title": "Hacienda La Colpa",
+      "description": "Modelo 3D completo de la Hacienda La Colpa. Incluye edificaciones principales y terreno circundante.",
+      "modelPath": "models3d/hacienda-colpa/modelo.glb",
+      "thumbnailPath": "models3d/hacienda-colpa/thumbnail.jpg",
+      "location": "Hacienda La Colpa, Cajamarca",
+      "area": "5,000 m²",
+      "date": "2024-02-20",
+      "userEmails": [
+        "cliente3@ejemplo.com"
+      ]
+    },
+    {
+      "id": "llacanora-norte-2024",
+      "title": "Llacanora Norte - Sector Residencial",
+      "description": "Reconstrucción 3D del sector residencial norte de Llacanora. Levantamiento con 450 fotografías aéreas.",
+      "modelPath": "models3d/llacanora/modelo.glb",
+      "thumbnailPath": "models3d/llacanora/thumbnail.jpg",
+      "location": "Llacanora, Cajamarca",
+      "area": "1,200 m²",
+      "date": "2024-03-10",
+      "userEmails": [
+        "cliente1@ejemplo.com",
+        "cliente4@ejemplo.com"
+      ]
+    }
+  ],
+  "info": {
+    "lastUpdated": "2024-03-15",
+    "totalModels": 3,
+    "instructions": "Para agregar un nuevo modelo: 1) Sube el GLB y thumbnail a la carpeta correspondiente, 2) Agrega la entrada en este JSON, 3) Commit y push a GitHub"
+  }
+}
