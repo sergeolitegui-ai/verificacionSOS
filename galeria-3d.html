@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tus Modelos 3D | Verificación SOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a2463;
+            --secondary: #3e92cc;
+            --accent: #1e6091;
+            --light: #f0f4f8;
+            --white: #ffffff;
+            --text: #1a1a2e;
+            --text-light: #4a5568;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Varela Round', sans-serif;
+            background: var(--light);
+            color: var(--text);
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .back-btn {
+            background: var(--secondary);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .model-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .model-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .model-thumbnail {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .model-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .model-thumbnail-icon {
+            width: 80px;
+            height: 80px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .model-info {
+            padding: 1.5rem;
+        }
+
+        .model-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .model-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .model-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .model-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .model-meta-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .view-model-btn {
+            width: 100%;
+            background: var(--secondary);
+            color: white;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .view-model-btn:hover {
+            background: var(--accent);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state-icon {
+            width: 120px;
+            height: 120px;
+            color: var(--text-light);
+            opacity: 0.3;
+            margin: 0 auto 2rem;
+        }
+
+        .empty-state-title {
+            font-size: 1.8rem;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state-text {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--light);
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mensaje de error de auth */
+        .auth-error {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .auth-error h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .auth-error p {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .auth-error a {
+            background: var(--secondary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .page-title { font-size: 2rem; }
+            .models-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .container { padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">Verificación SOS</a>
+            <a href="index.html" class="back-btn">← Volver al Inicio</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Tus Modelos 3D</h1>
+        <p class="page-subtitle">Explora las reconstrucciones 3D de tus proyectos</p>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Verificando sesión...</p>
+        </div>
+
+        <!-- Models Grid -->
+        <div id="modelsGrid" class="models-grid" style="display: none;"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" stroke-width="2"/>
+                <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <h2 class="empty-state-title">Aún no tienes modelos 3D</h2>
+            <p class="empty-state-text">
+                Los modelos 3D de tus proyectos aparecerán aquí una vez que el ingeniero los asigne a tu cuenta.
+            </p>
+        </div>
+
+        <!-- Auth Error State -->
+        <div id="authError" class="auth-error" style="display: none;">
+            <h2>Sesión no detectada</h2>
+            <p>Por favor inicia sesión primero para ver tus modelos 3D.</p>
+            <a href="index.html">Ir al Inicio</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDegSCUJDH6TB2FntneAJkfDB-g0o8gRes",
+            authDomain: "verificacionsos.firebaseapp.com",
+            projectId: "verificacionsos",
+            storageBucket: "verificacionsos.firebasestorage.app",
+            messagingSenderId: "806300847661",
+            appId: "1:806300847661:web:8f0f619b88c3e42e7e9c1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const loadingState = document.getElementById('loadingState');
+        const modelsGrid = document.getElementById('modelsGrid');
+        const emptyState = document.getElementById('emptyState');
+        const authError = document.getElementById('authError');
+
+        // ✅ FIX PRINCIPAL: esperamos a que Firebase confirme el estado de auth
+        // sin redirigir inmediatamente si no hay usuario
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // No redirigir automáticamente — mostrar mensaje amigable
+                loadingState.style.display = 'none';
+                authError.style.display = 'block';
+                return;
+            }
+
+            loadingState.querySelector('p').textContent = 'Cargando tus modelos 3D...';
+            await loadUserModels(user.email);
+        });
+
+        async function loadUserModels(userEmail) {
+            try {
+                // ✅ FIX: ruta corregida — models.json está en la raíz del repo
+                const response = await fetch('models.json');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: No se pudo cargar models.json`);
+                }
+
+                const data = await response.json();
+
+                // Filtrar modelos del usuario
+                const userModels = data.models.filter(model =>
+                    model.userEmails && model.userEmails.includes(userEmail)
+                );
+
+                loadingState.style.display = 'none';
+
+                if (userModels.length === 0) {
+                    emptyState.style.display = 'block';
+                } else {
+                    modelsGrid.style.display = 'grid';
+                    userModels.forEach(model => createModelCard(model));
+                }
+
+            } catch (error) {
+                console.error('Error loading models:', error);
+                loadingState.innerHTML = `
+                    <p style="color: #c0392b; font-size: 1rem;">
+                        ⚠️ Error al cargar los modelos: ${error.message}
+                    </p>
+                    <p style="margin-top: 1rem; color: #666;">
+                        Por favor recarga la página o contacta al administrador.
+                    </p>`;
+            }
+        }
+
+        function createModelCard(model) {
+            const card = document.createElement('div');
+            card.className = 'model-card';
+            card.onclick = () => window.location.href = `visor-3d.html?id=${model.id}`;
+
+            // Formatear fecha de forma segura
+            let fechaFormateada = 'Sin fecha';
+            if (model.date) {
+                try {
+                    fechaFormateada = new Date(model.date).toLocaleDateString('es-PE');
+                } catch(e) {}
+            }
+
+            card.innerHTML = `
+                <div class="model-thumbnail">
+                    ${model.thumbnailPath
+                        ? `<img src="${model.thumbnailPath}" alt="${model.title}" onerror="this.parentElement.innerHTML='<svg class=\\'model-thumbnail-icon\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\'><path d=\\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\\' stroke=\\'currentColor\\' stroke-width=\\'2\\'/></svg>'">`
+                        : `<svg class="model-thumbnail-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" stroke-width="2"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+                           </svg>`
+                    }
+                </div>
+                <div class="model-info">
+                    <h3 class="model-title">${model.title || 'Modelo 3D'}</h3>
+                    <p class="model-description">${model.description || 'Reconstrucción 3D del proyecto'}</p>
+                    <div class="model-meta">
+                        <div class="model-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2"/>
+                                <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2"/>
+                                <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            ${fechaFormateada}
+                        </div>
+                        <div class="model-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            ${model.location || 'Cajamarca'}
+                        </div>
+                    </div>
+                    <button class="view-model-btn">Ver Modelo 3D →</button>
+                </div>
+            `;
+
+            modelsGrid.appendChild(card);
+        }
+    </script>
+</body>
+</html>
