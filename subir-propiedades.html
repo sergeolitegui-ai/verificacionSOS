@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Propiedades | Verificación SOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a2463;
+            --secondary: #3e92cc;
+            --accent: #1e6091;
+            --gold: #d4af37;
+            --light: #f0f4f8;
+            --white: #ffffff;
+            --text: #1a1a2e;
+            --text-light: #4a5568;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Varela Round', sans-serif;
+            background: #f0f4f8;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── AUTH SCREEN ── */
+        .auth-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a2463 0%, #1e6091 50%, #3e92cc 100%);
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+        }
+
+        .auth-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #b8941f, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .google-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .google-btn:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 4px 12px rgba(62,146,204,0.2);
+        }
+
+        .google-btn img { width: 24px; height: 24px; }
+
+        .auth-error {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #fef2f2;
+            border-radius: 8px;
+            color: var(--danger);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* ── MAIN LAYOUT ── */
+        .app { display: none; min-height: 100vh; }
+
+        /* ── HEADER ── */
+        .app-header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .app-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .app-logo span { color: white; font-weight: 400; font-size: 0.9rem; margin-left: 0.5rem; }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-user img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .header-user-name { font-size: 0.9rem; }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+        /* ── TABS ── */
+        .tabs {
+            background: white;
+            border-bottom: 2px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            gap: 0;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab:hover { color: var(--secondary); }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .tab-badge {
+            background: var(--warning);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* ── FORM SECTION ── */
+        .form-header {
+            margin-bottom: 2rem;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .form-header p { color: var(--text-light); }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .form-section.full { grid-column: 1 / -1; }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title svg {
+            width: 18px;
+            height: 18px;
+            color: var(--secondary);
+        }
+
+        .field {
+            margin-bottom: 1.2rem;
+        }
+
+        .field:last-child { margin-bottom: 0; }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            transition: all 0.2s;
+            background: white;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(62,146,204,0.15);
+        }
+
+        textarea { resize: vertical; min-height: 100px; }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .field-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        /* ── CHECKBOXES (servicios) ── */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.6rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .checkbox-item:hover { border-color: var(--secondary); background: #f8fbff; }
+
+        .checkbox-item.checked {
+            border-color: var(--success);
+            background: #f0fdf4;
+        }
+
+        .checkbox-item input { display: none; }
+
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item.checked .checkbox-custom {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .checkbox-item.checked .checkbox-custom::after {
+            content: '✓';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .checkbox-label { font-size: 0.9rem; color: var(--text); }
+
+        /* ── STATUS & TYPE SELECTOR ── */
+        .radio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+        }
+
+        .radio-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.75rem 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .radio-item:hover { border-color: var(--secondary); }
+        .radio-item.selected { border-color: var(--secondary); background: #f0f7ff; }
+        .radio-item input { display: none; }
+        .radio-icon { font-size: 1.4rem; }
+        .radio-label { font-size: 0.8rem; color: var(--text); font-weight: 600; }
+
+        /* ── SUBMIT BUTTON ── */
+        .submit-section {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.85rem 2rem;
+            border-radius: 10px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--text-light);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover { background: var(--border); }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(62,146,204,0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(62,146,204,0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); }
+
+        /* ── PENDING PROPERTIES ── */
+        .pending-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .pending-header h2 { font-size: 1.8rem; color: var(--primary); }
+
+        .properties-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .property-item {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: start;
+            border-left: 4px solid var(--warning);
+            transition: all 0.2s;
+        }
+
+        .property-item.approved { border-left-color: var(--success); }
+        .property-item.rejected { border-left-color: var(--danger); opacity: 0.6; }
+
+        .property-item-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .property-item-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .property-item-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .status-badge.pendiente { background: #fef3c7; color: #92400e; }
+        .status-badge.aprobado { background: #d1fae5; color: #065f46; }
+        .status-badge.rechazado { background: #fee2e2; color: #991b1b; }
+        .status-badge.disponible { background: #d1fae5; color: #065f46; }
+        .status-badge.reservado { background: #fef3c7; color: #92400e; }
+        .status-badge.vendido { background: #f3f4f6; color: #374151; }
+
+        .property-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .action-btn.approve {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.approve:hover { background: #059669; }
+
+        .action-btn.reject {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .action-btn.reject:hover { background: var(--danger); color: white; }
+
+        .action-btn.delete {
+            background: #f3f4f6;
+            color: var(--text-light);
+        }
+
+        .action-btn.delete:hover { background: var(--danger); color: white; }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon { font-size: 4rem; margin-bottom: 1rem; }
+
+        /* ── ADMINS PANEL ── */
+        .admins-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .admin-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--light);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .admin-item-email { color: var(--text); font-weight: 600; }
+
+        .admin-item-remove {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .admin-item-remove:hover { background: #fee2e2; }
+
+        .add-admin-form {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .add-admin-form input { flex: 1; }
+
+        /* ── SPINNER ── */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-section.full { grid-column: 1; }
+            .admins-grid { grid-template-columns: 1fr; }
+            .field-row, .field-row-3 { grid-template-columns: 1fr; }
+            .radio-grid { grid-template-columns: repeat(2, 1fr); }
+            .main-content { padding: 1rem; }
+            .tabs { padding: 0 1rem; overflow-x: auto; }
+            .tab { white-space: nowrap; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ── -->
+<div class="auth-screen" id="authScreen">
+    <div class="auth-card">
+        <div class="auth-icon">⚜</div>
+        <h2 class="auth-title">Panel de Propiedades</h2>
+        <p class="auth-subtitle">Acceso exclusivo para colaboradores autorizados de Verificación SOS</p>
+        <button class="google-btn" onclick="loginWithGoogle()">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continuar con Google
+        </button>
+        <div class="auth-error" id="authError">⚠️ Tu email no está autorizado para acceder a este panel.</div>
+    </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div class="app" id="app">
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="app-header-left">
+            <div class="app-logo">⚜ Verificación SOS <span>· Panel de Propiedades</span></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <div class="header-user">
+                <img id="headerPhoto" src="" alt="">
+                <span class="header-user-name" id="headerName"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('nueva')" id="tab-nueva">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            Nueva Propiedad
+        </div>
+        <div class="tab" onclick="switchTab('pendientes')" id="tab-pendientes">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" stroke-width="2"/></svg>
+            Revisión
+            <div class="tab-badge" id="pendingBadge" style="display:none">0</div>
+        </div>
+        <div class="tab" onclick="switchTab('admins')" id="tab-admins">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Colaboradores
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- ── PANEL: NUEVA PROPIEDAD ── -->
+        <div class="panel active" id="panel-nueva">
+            <div class="form-header">
+                <h2>📋 Nueva Propiedad</h2>
+                <p>Completa todos los datos. La propiedad quedará en revisión hasta que la apruebes.</p>
+            </div>
+
+            <div class="form-grid">
+
+                <!-- Información básica -->
+                <div class="form-section full">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" stroke="currentColor" stroke-width="2"/><polyline points="13 2 13 9 20 9" stroke="currentColor" stroke-width="2"/></svg>
+                        Información Básica
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>Título de la Propiedad *</label>
+                            <input type="text" id="f-titulo" placeholder="Ej: Terreno en Sector Yanamarca">
+                        </div>
+                        <div class="field">
+                            <label>Subtítulo / Referencia</label>
+                            <input type="text" id="f-subtitulo" placeholder="Ej: A 5 min del centro de Cajamarca">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Descripción *</label>
+                        <textarea id="f-descripcion" placeholder="Describe la propiedad con detalle: características del terreno, accesos, entorno, etc."></textarea>
+                    </div>
+                </div>
+
+                <!-- Tipo de propiedad -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/></svg>
+                        Tipo de Propiedad
+                    </div>
+                    <div class="radio-grid" id="tipo-grid">
+                        <label class="radio-item selected" onclick="selectRadio('tipo', 'terreno', this)">
+                            <input type="radio" name="tipo" value="terreno" checked>
+                            <span class="radio-icon">🏔️</span>
+                            <span class="radio-label">Terreno Rural</span>
+                        </label>
+                        <label class="radio-item" onclick="selectRadio('tipo', 'urbano', this)">
+                            <input type="radio" name="tipo" value="urbano">
+                            <span class="radio-icon">🏙️</span>
+                            <span class="radio-label">Terreno Urbano</span>
+                        </label>
+                        <label class="radio-item" onclick="selectRadio('tipo', 'casa', this)">
+                            <input type="radio" name="tipo" value="casa">
+                            <span class="radio-icon">🏠</span>
+                            <span class="radio-label">Casa</span>
+                        </label>
+                        <label class="radio-item" onclick="selectRadio('tipo', 'apartamento', this)">
+                            <input type="radio" name="tipo" value="apartamento">
+                            <span class="radio-icon">🏢</span>
+                            <span class="radio-label">Apartamento</span>
+                        </label>
+                        <label class="radio-item" onclick="selectRadio('tipo', 'lotificacion', this)">
+                            <input type="radio" name="tipo" value="lotificacion">
+                            <span class="radio-icon">📐</span>
+                            <span class="radio-label">Lotización</span>
+                        </label>
+                        <label class="radio-item" onclick="selectRadio('tipo', 'otro', this)">
+                            <input type="radio" name="tipo" value="otro">
+                            <span class="radio-icon">📋</span>
+                            <span class="radio-label">Otro</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Estado y precio -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z" fill="currentColor"/></svg>
+                        Precio y Estado
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>Precio *</label>
+                            <input type="number" id="f-precio" placeholder="0.00">
+                        </div>
+                        <div class="field">
+                            <label>Moneda</label>
+                            <select id="f-moneda">
+                                <option value="PEN">S/ Soles</option>
+                                <option value="USD">$ Dólares</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Estado de la Propiedad</label>
+                        <div class="radio-grid" id="estado-grid" style="grid-template-columns: repeat(3,1fr);">
+                            <label class="radio-item selected" onclick="selectRadio('estado', 'disponible', this)">
+                                <input type="radio" name="estado" value="disponible" checked>
+                                <span class="radio-icon">✅</span>
+                                <span class="radio-label">Disponible</span>
+                            </label>
+                            <label class="radio-item" onclick="selectRadio('estado', 'reservado', this)">
+                                <input type="radio" name="estado" value="reservado">
+                                <span class="radio-icon">🔒</span>
+                                <span class="radio-label">Reservado</span>
+                            </label>
+                            <label class="radio-item" onclick="selectRadio('estado', 'vendido', this)">
+                                <input type="radio" name="estado" value="vendido">
+                                <span class="radio-icon">🏷️</span>
+                                <span class="radio-label">Vendido</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ubicación -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
+                        Ubicación
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>Sector / Zona</label>
+                            <input type="text" id="f-sector" placeholder="Ej: Yanamarca">
+                        </div>
+                        <div class="field">
+                            <label>Distrito</label>
+                            <input type="text" id="f-distrito" placeholder="Ej: Llacanora">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>Provincia</label>
+                            <input type="text" id="f-provincia" placeholder="Ej: Cajamarca">
+                        </div>
+                        <div class="field">
+                            <label>Departamento</label>
+                            <input type="text" id="f-departamento" value="Cajamarca">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Referencia de Ubicación</label>
+                        <input type="text" id="f-referencia" placeholder="Ej: A 500m de la carretera a Baños del Inca">
+                    </div>
+                </div>
+
+                <!-- Coordenadas -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" stroke="currentColor" stroke-width="2"/></svg>
+                        Coordenadas
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>Latitud (WGS84)</label>
+                            <input type="text" id="f-lat" placeholder="Ej: -7.222635">
+                        </div>
+                        <div class="field">
+                            <label>Longitud (WGS84)</label>
+                            <input type="text" id="f-lng" placeholder="Ej: -78.424366">
+                        </div>
+                    </div>
+                    <div class="section-title" style="font-size:0.8rem; margin-top:0.5rem;">Coordenadas UTM (opcional)</div>
+                    <div class="field-row-3">
+                        <div class="field">
+                            <label>Este</label>
+                            <input type="text" id="f-utm-este" placeholder="784438.56">
+                        </div>
+                        <div class="field">
+                            <label>Norte</label>
+                            <input type="text" id="f-utm-norte" placeholder="9200837.72">
+                        </div>
+                        <div class="field">
+                            <label>Zona</label>
+                            <input type="text" id="f-utm-zona" placeholder="17S">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Área y medidas -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="2"/></svg>
+                        Área y Medidas
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>Área Total (m²) *</label>
+                            <input type="number" id="f-area" placeholder="438">
+                        </div>
+                        <div class="field">
+                            <label>Área Construida (m²)</label>
+                            <input type="number" id="f-area-construida" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>Dormitorios</label>
+                            <input type="number" id="f-dormitorios" placeholder="0" min="0">
+                        </div>
+                        <div class="field">
+                            <label>Baños</label>
+                            <input type="number" id="f-banos" placeholder="0" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Servicios -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Servicios Disponibles
+                    </div>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="serv-agua">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">💧 Agua</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="serv-luz">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">💡 Luz / Electricidad</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="serv-desague">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">🚿 Desagüe</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="serv-internet">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">📡 Internet</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="serv-gas">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">🔥 Gas</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="serv-cable">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">📺 Cable</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Cercanías -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        Cercanías
+                    </div>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="cerca-colegio">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">🏫 Colegio</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="cerca-hospital">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">🏥 Hospital/Posta</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="cerca-mercado">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">🛒 Mercado</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="cerca-transporte">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">🚌 Transporte</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="cerca-carretera">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">🛣️ Carretera</span>
+                        </label>
+                        <label class="checkbox-item" onclick="toggleCheck(this)">
+                            <input type="checkbox" id="cerca-parque">
+                            <div class="checkbox-custom"></div>
+                            <span class="checkbox-label">🌳 Parque/Plaza</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Títulos y SUNARP -->
+                <div class="form-section full">
+                    <div class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/></svg>
+                        Títulos y Registro SUNARP
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label>¿Tiene Partida SUNARP?</label>
+                            <select id="f-sunarp-tiene">
+                                <option value="si">Sí, registrado en SUNARP</option>
+                                <option value="no">No registrado</option>
+                                <option value="tramite">En trámite</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Número de Partida</label>
+                            <input type="text" id="f-sunarp-partida" placeholder="Ej: 02226166">
+                        </div>
+                        <div class="field">
+                            <label>Zona Registral</label>
+                            <input type="text" id="f-sunarp-zona" placeholder="Ej: Zona Registral II - Sede Chiclayo">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Observaciones / Notas adicionales</label>
+                        <textarea id="f-notas" placeholder="Información adicional relevante: estado legal, situación actual, condiciones especiales, etc." style="min-height:80px;"></textarea>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="submit-section">
+                    <button class="btn btn-secondary" onclick="resetForm()">
+                        🗑️ Limpiar Formulario
+                    </button>
+                    <button class="btn btn-primary" id="submitBtn" onclick="submitProperty()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Enviar a Revisión
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── PANEL: REVISIÓN ── -->
+        <div class="panel" id="panel-pendientes">
+            <div class="pending-header">
+                <div>
+                    <h2>🔍 Revisión de Propiedades</h2>
+                    <p style="color:var(--text-light); margin-top:0.3rem;">Aprueba o rechaza las propiedades antes de publicarlas</p>
+                </div>
+                <button class="btn btn-secondary" onclick="loadPendingProperties()">
+                    🔄 Actualizar
+                </button>
+            </div>
+            <div class="properties-list" id="propertiesList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">⏳</div>
+                    <p>Cargando propiedades...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── PANEL: COLABORADORES ── -->
+        <div class="panel" id="panel-admins">
+            <div class="form-header">
+                <h2>👥 Colaboradores Autorizados</h2>
+                <p>Solo estos emails pueden acceder al panel y subir propiedades</p>
+            </div>
+            <div class="admins-grid">
+                <div class="admin-card">
+                    <div class="section-title">Emails Autorizados</div>
+                    <div class="admin-list" id="adminList">
+                        <p style="color:var(--text-light); font-size:0.9rem;">Cargando...</p>
+                    </div>
+                    <div class="add-admin-form">
+                        <input type="email" id="newAdminEmail" placeholder="nuevo@email.com">
+                        <button class="btn btn-primary" onclick="addAdmin()" style="white-space:nowrap;">
+                            + Agregar
+                        </button>
+                    </div>
+                </div>
+                <div class="admin-card">
+                    <div class="section-title">ℹ️ Sobre los permisos</div>
+                    <p style="color:var(--text-light); font-size:0.9rem; line-height:1.7;">
+                        Los <strong>colaboradores autorizados</strong> pueden:<br><br>
+                        ✅ Acceder a este panel<br>
+                        ✅ Subir nuevas propiedades<br>
+                        ✅ Ver propiedades en revisión<br><br>
+                        Solo el <strong>administrador principal</strong> puede:<br><br>
+                        ⚜️ Aprobar / rechazar propiedades<br>
+                        ⚜️ Gestionar colaboradores<br><br>
+                        <em style="font-size:0.8rem;">El admin principal es el primer email en la lista.</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main-content -->
+</div><!-- /app -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getFirestore, collection, doc, addDoc, getDoc, getDocs, setDoc, deleteDoc, updateDoc, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    // ✅ Mismo Firebase que index.html
+    const firebaseConfig = {
+        apiKey: "AIzaSyBYHXbX2Ra8RMF_un8N610jEjsDn9Rvw0U",
+        authDomain: "verificacionsos-d55a6.firebaseapp.com",
+        projectId: "verificacionsos-d55a6",
+        storageBucket: "verificacionsos-d55a6.firebasestorage.app",
+        messagingSenderId: "17499432341",
+        appId: "1:17499432341:web:147e6abbc7b3dff3fb829c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    let currentUser = null;
+    let isAdmin = false;
+
+    // ── AUTH STATE ──
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            showAuthScreen();
+            return;
+        }
+
+        // Verificar si está autorizado
+        const authorized = await checkAuthorized(user.email);
+        if (!authorized) {
+            document.getElementById('authError').style.display = 'block';
+            await signOut(auth);
+            return;
+        }
+
+        currentUser = user;
+        isAdmin = await checkIsAdmin(user.email);
+        showApp(user);
+        loadAdmins();
+        loadPendingProperties();
+    });
+
+    async function checkAuthorized(email) {
+        try {
+            const docRef = doc(db, 'panel_config', 'authorized_emails');
+            const snap = await getDoc(docRef);
+            if (!snap.exists()) {
+                // Primera vez: crear con el email actual como admin
+                await setDoc(docRef, { emails: [email], admin: email });
+                return true;
+            }
+            const data = snap.data();
+            return data.emails && data.emails.includes(email);
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    }
+
+    async function checkIsAdmin(email) {
+        try {
+            const docRef = doc(db, 'panel_config', 'authorized_emails');
+            const snap = await getDoc(docRef);
+            if (!snap.exists()) return true;
+            return snap.data().admin === email;
+        } catch (e) { return false; }
+    }
+
+    function showAuthScreen() {
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('app').style.display = 'none';
+    }
+
+    function showApp(user) {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        document.getElementById('headerPhoto').src = user.photoURL || '';
+        document.getElementById('headerName').textContent = user.displayName?.split(' ')[0] || user.email;
+    }
+
+    // ── LOGIN ──
+    window.loginWithGoogle = async function() {
+        try {
+            document.getElementById('authError').style.display = 'none';
+            await signInWithPopup(auth, provider);
+        } catch (e) {
+            if (e.code !== 'auth/popup-closed-by-user') {
+                showToast('Error al iniciar sesión', 'error');
+            }
+        }
+    };
+
+    window.logout = async function() {
+        await signOut(auth);
+    };
+
+    // ── SUBMIT PROPERTY ──
+    window.submitProperty = async function() {
+        const titulo = document.getElementById('f-titulo').value.trim();
+        const descripcion = document.getElementById('f-descripcion').value.trim();
+        const precio = parseFloat(document.getElementById('f-precio').value);
+        const area = parseFloat(document.getElementById('f-area').value);
+
+        if (!titulo) { showToast('El título es obligatorio', 'error'); return; }
+        if (!descripcion) { showToast('La descripción es obligatoria', 'error'); return; }
+        if (!precio || precio <= 0) { showToast('Ingresa un precio válido', 'error'); return; }
+        if (!area || area <= 0) { showToast('Ingresa el área del terreno', 'error'); return; }
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div> Guardando...';
+
+        const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'terreno';
+        const estado = document.querySelector('input[name="estado"]:checked')?.value || 'disponible';
+
+        const propiedad = {
+            // Básica
+            titulo,
+            subtitulo: document.getElementById('f-subtitulo').value.trim(),
+            descripcion,
+            tipo,
+            estado,
+            // Precio
+            precio,
+            moneda: document.getElementById('f-moneda').value,
+            // Ubicación
+            sector: document.getElementById('f-sector').value.trim(),
+            distrito: document.getElementById('f-distrito').value.trim(),
+            provincia: document.getElementById('f-provincia').value.trim(),
+            departamento: document.getElementById('f-departamento').value.trim(),
+            referencia: document.getElementById('f-referencia').value.trim(),
+            // Coordenadas
+            coordenadas: {
+                lat: parseFloat(document.getElementById('f-lat').value) || null,
+                lng: parseFloat(document.getElementById('f-lng').value) || null,
+            },
+            utm: {
+                este: document.getElementById('f-utm-este').value.trim(),
+                norte: document.getElementById('f-utm-norte').value.trim(),
+                zona: document.getElementById('f-utm-zona').value.trim(),
+            },
+            // Medidas
+            area,
+            areaConstruida: parseFloat(document.getElementById('f-area-construida').value) || 0,
+            dormitorios: parseInt(document.getElementById('f-dormitorios').value) || 0,
+            banos: parseInt(document.getElementById('f-banos').value) || 0,
+            // Servicios
+            servicios: {
+                agua: document.getElementById('serv-agua').checked,
+                luz: document.getElementById('serv-luz').checked,
+                desague: document.getElementById('serv-desague').checked,
+                internet: document.getElementById('serv-internet').checked,
+                gas: document.getElementById('serv-gas').checked,
+                cable: document.getElementById('serv-cable').checked,
+            },
+            // Cercanías
+            cercanias: {
+                colegio: document.getElementById('cerca-colegio').checked,
+                hospital: document.getElementById('cerca-hospital').checked,
+                mercado: document.getElementById('cerca-mercado').checked,
+                transporte: document.getElementById('cerca-transporte').checked,
+                carretera: document.getElementById('cerca-carretera').checked,
+                parque: document.getElementById('cerca-parque').checked,
+            },
+            // SUNARP
+            sunarp: {
+                registrado: document.getElementById('f-sunarp-tiene').value,
+                partida: document.getElementById('f-sunarp-partida').value.trim(),
+                zona: document.getElementById('f-sunarp-zona').value.trim(),
+            },
+            notas: document.getElementById('f-notas').value.trim(),
+            // Meta
+            estado_publicacion: 'pendiente',
+            subidoPor: currentUser.email,
+            subidoPorNombre: currentUser.displayName,
+            fechaCreacion: serverTimestamp(),
+            images: [],
+        };
+
+        try {
+            await addDoc(collection(db, 'propiedades'), propiedad);
+            showToast('✅ Propiedad enviada a revisión correctamente', 'success');
+            resetForm();
+            switchTab('pendientes');
+            loadPendingProperties();
+        } catch (e) {
+            console.error(e);
+            showToast('Error al guardar: ' + e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Enviar a Revisión';
+        }
+    };
+
+    // ── LOAD PROPERTIES ──
+    window.loadPendingProperties = async function() {
+        const list = document.getElementById('propertiesList');
+        list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏳</div><p>Cargando...</p></div>';
+
+        try {
+            const q = query(collection(db, 'propiedades'), orderBy('fechaCreacion', 'desc'));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No hay propiedades todavía</p></div>';
+                document.getElementById('pendingBadge').style.display = 'none';
+                return;
+            }
+
+            let pendingCount = 0;
+            list.innerHTML = '';
+
+            snap.forEach(docSnap => {
+                const p = docSnap.data();
+                const id = docSnap.id;
+                if (p.estado_publicacion === 'pendiente') pendingCount++;
+
+                const fechaStr = p.fechaCreacion?.toDate
+                    ? p.fechaCreacion.toDate().toLocaleDateString('es-PE')
+                    : 'Sin fecha';
+
+                const estadoBadge = {
+                    pendiente: '<span class="status-badge pendiente">⏳ Pendiente</span>',
+                    aprobado: '<span class="status-badge aprobado">✅ Aprobado</span>',
+                    rechazado: '<span class="status-badge rechazado">❌ Rechazado</span>',
+                }[p.estado_publicacion] || '';
+
+                const item = document.createElement('div');
+                item.className = `property-item ${p.estado_publicacion === 'aprobado' ? 'approved' : p.estado_publicacion === 'rechazado' ? 'rejected' : ''}`;
+                item.innerHTML = `
+                    <div>
+                        <div class="property-item-title">${p.titulo || 'Sin título'}</div>
+                        <div class="property-item-meta">
+                            <span>📍 ${[p.sector, p.distrito, p.provincia].filter(Boolean).join(', ') || 'Sin ubicación'}</span>
+                            <span>💰 ${p.moneda === 'PEN' ? 'S/' : '$'}${(p.precio||0).toLocaleString()}</span>
+                            <span>📐 ${p.area || 0} m²</span>
+                            <span>📅 ${fechaStr}</span>
+                            <span>👤 ${p.subidoPorNombre || p.subidoPor || 'Desconocido'}</span>
+                        </div>
+                        <div>${estadoBadge}</div>
+                        ${p.descripcion ? `<p style="color:var(--text-light);font-size:0.85rem;margin-top:0.5rem;line-height:1.5;">${p.descripcion.substring(0, 120)}${p.descripcion.length > 120 ? '...' : ''}</p>` : ''}
+                    </div>
+                    <div class="property-actions">
+                        ${p.estado_publicacion !== 'aprobado' ? `<button class="action-btn approve" onclick="approveProperty('${id}')">✅ Aprobar</button>` : ''}
+                        ${p.estado_publicacion !== 'rechazado' ? `<button class="action-btn reject" onclick="rejectProperty('${id}')">❌ Rechazar</button>` : ''}
+                        <button class="action-btn delete" onclick="deleteProperty('${id}')">🗑️ Eliminar</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            if (pendingCount > 0) {
+                document.getElementById('pendingBadge').style.display = 'flex';
+                document.getElementById('pendingBadge').textContent = pendingCount;
+            } else {
+                document.getElementById('pendingBadge').style.display = 'none';
+            }
+
+        } catch (e) {
+            list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Error al cargar: ${e.message}</p></div>`;
+        }
+    };
+
+    // ── APPROVE / REJECT / DELETE ──
+    window.approveProperty = async function(id) {
+        try {
+            await updateDoc(doc(db, 'propiedades', id), { estado_publicacion: 'aprobado' });
+            showToast('✅ Propiedad aprobada y publicada', 'success');
+            loadPendingProperties();
+        } catch (e) { showToast('Error: ' + e.message, 'error'); }
+    };
+
+    window.rejectProperty = async function(id) {
+        try {
+            await updateDoc(doc(db, 'propiedades', id), { estado_publicacion: 'rechazado' });
+            showToast('Propiedad rechazada', 'warning');
+            loadPendingProperties();
+        } catch (e) { showToast('Error: ' + e.message, 'error'); }
+    };
+
+    window.deleteProperty = async function(id) {
+        if (!confirm('¿Eliminar esta propiedad definitivamente? Esta acción no se puede deshacer.')) return;
+        try {
+            await deleteDoc(doc(db, 'propiedades', id));
+            showToast('Propiedad eliminada', 'warning');
+            loadPendingProperties();
+        } catch (e) { showToast('Error: ' + e.message, 'error'); }
+    };
+
+    // ── ADMINS ──
+    window.loadAdmins = async function() {
+        try {
+            const snap = await getDoc(doc(db, 'panel_config', 'authorized_emails'));
+            if (!snap.exists()) return;
+            const emails = snap.data().emails || [];
+            const adminEmail = snap.data().admin;
+            const list = document.getElementById('adminList');
+            list.innerHTML = '';
+            emails.forEach(email => {
+                const item = document.createElement('div');
+                item.className = 'admin-item';
+                item.innerHTML = `
+                    <span class="admin-item-email">
+                        ${email === adminEmail ? '⚜️ ' : '👤 '}${email}
+                        ${email === adminEmail ? '<small style="color:var(--text-light);margin-left:0.5rem;">(admin principal)</small>' : ''}
+                    </span>
+                    ${email !== adminEmail && isAdmin ? `<button class="admin-item-remove" onclick="removeAdmin('${email}')">✕</button>` : ''}
+                `;
+                list.appendChild(item);
+            });
+        } catch (e) { console.error(e); }
+    };
+
+    window.addAdmin = async function() {
+        if (!isAdmin) { showToast('Solo el admin principal puede gestionar colaboradores', 'error'); return; }
+        const email = document.getElementById('newAdminEmail').value.trim().toLowerCase();
+        if (!email || !email.includes('@')) { showToast('Ingresa un email válido', 'error'); return; }
+
+        try {
+            const ref = doc(db, 'panel_config', 'authorized_emails');
+            const snap = await getDoc(ref);
+            const emails = snap.exists() ? snap.data().emails : [];
+            if (emails.includes(email)) { showToast('Este email ya está autorizado', 'warning'); return; }
+            emails.push(email);
+            await setDoc(ref, { emails }, { merge: true });
+            document.getElementById('newAdminEmail').value = '';
+            showToast(`✅ ${email} agregado como colaborador`, 'success');
+            loadAdmins();
+        } catch (e) { showToast('Error: ' + e.message, 'error'); }
+    };
+
+    window.removeAdmin = async function(email) {
+        if (!confirm(`¿Quitar acceso a ${email}?`)) return;
+        try {
+            const ref = doc(db, 'panel_config', 'authorized_emails');
+            const snap = await getDoc(ref);
+            const emails = (snap.data().emails || []).filter(e => e !== email);
+            await setDoc(ref, { emails }, { merge: true });
+            showToast(`${email} eliminado`, 'warning');
+            loadAdmins();
+        } catch (e) { showToast('Error: ' + e.message, 'error'); }
+    };
+</script>
+
+<script>
+    // ── UI HELPERS ──
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        document.getElementById('panel-' + tab).classList.add('active');
+        if (tab === 'pendientes') loadPendingProperties();
+        if (tab === 'admins') loadAdmins();
+    }
+
+    function selectRadio(name, value, el) {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+            r.closest('.radio-item').classList.remove('selected');
+        });
+        el.classList.add('selected');
+        el.querySelector('input').checked = true;
+    }
+
+    function toggleCheck(el) {
+        const cb = el.querySelector('input[type="checkbox"]');
+        cb.checked = !cb.checked;
+        el.classList.toggle('checked', cb.checked);
+    }
+
+    function resetForm() {
+        // Text inputs
+        ['f-titulo','f-subtitulo','f-descripcion','f-precio','f-sector','f-distrito',
+         'f-provincia','f-referencia','f-lat','f-lng','f-utm-este','f-utm-norte',
+         'f-utm-zona','f-area','f-area-construida','f-dormitorios','f-banos',
+         'f-sunarp-partida','f-sunarp-zona','f-notas'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        document.getElementById('f-departamento').value = 'Cajamarca';
+        document.getElementById('f-moneda').value = 'PEN';
+        document.getElementById('f-sunarp-tiene').value = 'si';
+
+        // Radios
+        document.querySelectorAll('.radio-item').forEach(r => r.classList.remove('selected'));
+        const defaultTipo = document.querySelector('input[name="tipo"][value="terreno"]');
+        if (defaultTipo) defaultTipo.closest('.radio-item').classList.add('selected');
+        const defaultEstado = document.querySelector('input[name="estado"][value="disponible"]');
+        if (defaultEstado) defaultEstado.closest('.radio-item').classList.add('selected');
+
+        // Checkboxes
+        document.querySelectorAll('.checkbox-item').forEach(c => {
+            c.classList.remove('checked');
+            const cb = c.querySelector('input');
+            if (cb) cb.checked = false;
+        });
+
+        showToast('Formulario limpiado', 'warning');
+    }
+
+    function showToast(msg, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    window.switchTab = switchTab;
+    window.resetForm = resetForm;
+</script>
+
+</body>
+</html>
