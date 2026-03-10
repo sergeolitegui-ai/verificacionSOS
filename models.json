@@ -5,6 +5,7 @@
       "title": "Proyecto Sarin - Levantamiento con Drone",
       "description": "Reconstrucción 3D del terreno usando OpenDroneMap. Modelo georeferenciado con nube de puntos optimizada para visualización web.",
       "modelPath": "models3d/proyecto-sarin/modelo.glb",
+      "iosPath": "models3d/proyecto-sarin/modelo.usdz",
       "thumbnailPath": "models3d/proyecto-sarin/thumbnail.jpg",
       "location": "Sarin, Cajamarca",
       "area": "Levantamiento topográfico",
@@ -20,7 +21,5 @@
   "info": {
     "lastUpdated": "2024-03-15",
     "totalModels": 1
-    "iosPath": "models3d/proyecto-sarin/modelo.usdz"
   }
 }
-
