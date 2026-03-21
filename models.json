@@ -16,10 +16,25 @@
         "petersilvaes@gmail.com",
         "mendozamirella49@gmail.com"
       ]
+    },
+    {
+      "id": "la-fortuna-2024",
+      "title": "La Fortuna - Levantamiento con Drone",
+      "description": "Reconstrucción 3D del terreno usando OpenDroneMap. Modelo georeferenciado con nube de puntos optimizada para visualización web.",
+      "modelPath": "models3d/la-fortuna/modelo.glb",
+      "iosPath": "models3d/la-fortuna/modelo.usdz",
+      "thumbnailPath": "models3d/la-fortuna/thumbnail.jpg",
+      "location": "Virú, La Libertad",
+      "area": "Levantamiento topográfico",
+      "date": "2024-03-21",
+      "userEmails": [
+        "deysi.eliza.deav@gmail.com",
+        "americofelcastillo@gmail.com"
+      ]
     }
   ],
   "info": {
-    "lastUpdated": "2024-03-15",
-    "totalModels": 1
+    "lastUpdated": "2024-03-21",
+    "totalModels": 2
   }
 }
