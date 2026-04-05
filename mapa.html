@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Precios | Verificación SOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Varela Round', sans-serif; overflow: hidden; }
+        #map { height: 100vh; width: 100%; }
+        
+        .back-button {
+            position: fixed; top: 1rem; left: 1rem; background: white;
+            color: #0a2463; padding: 0.5rem 1rem; border-radius: 8px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); z-index: 1000;
+        }
+        
+        .leaflet-top.leaflet-left { top: 120px !important; }
+        
+        /* Geolocation button */
+        .locate-button {
+            position: fixed; bottom: 2rem; right: 1rem; background: white;
+            border: none; width: 50px; height: 50px; border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; transition: all 0.3s ease;
+        }
+        .locate-button:hover { transform: scale(1.1); }
+        .locate-button:active { transform: scale(0.95); }
+        .locate-button.loading { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .locate-icon { width: 24px; height: 24px; stroke: #0a2463; }
+        
+        /* Location hint tooltip */
+        .location-hint {
+            position: fixed; bottom: 6rem; right: 1rem;
+            background: linear-gradient(135deg, #f87171 0%, #fca5a5 100%);
+            color: white; padding: 0.6rem 1rem; border-radius: 12px;
+            font-size: 0.8rem; font-weight: 600;
+            box-shadow: 0 3px 12px rgba(248, 113, 113, 0.3);
+            z-index: 999; max-width: 200px; text-align: center; cursor: pointer;
+            animation: slideInBounce 0.6s ease-out, oscillate 2s ease-in-out 1s infinite;
+        }
+        .location-hint::after {
+            content: ''; position: absolute; bottom: -6px; right: 18px;
+            width: 0; height: 0; border-left: 8px solid transparent;
+            border-right: 8px solid transparent; border-top: 8px solid #fca5a5;
+        }
+        .location-hint.hidden { animation: slideOutDown 0.4s ease-in forwards; }
+        @keyframes slideInBounce {
+            0% { opacity: 0; transform: translateY(20px); }
+            60% { opacity: 1; transform: translateY(-5px); }
+            80% { transform: translateY(2px); } 100% { transform: translateY(0); }
+        }
+        @keyframes oscillate {
+            0%, 100% { transform: translateX(0) scale(1); }
+            25% { transform: translateX(-3px) scale(1.02); }
+            75% { transform: translateX(3px) scale(1.02); }
+        }
+        @keyframes slideOutDown { to { opacity: 0; transform: translateY(30px); } }
+        
+        /* Info card */
+        .info-card {
+            position: fixed; top: 1rem; right: 1rem;
+            padding: 0.5rem; text-align: right; z-index: 1000;
+        }
+        .logo { font-size: 4rem; margin-bottom: 0.2rem; line-height: 1; color: #000; }
+        .engineer-name { color: #000; font-weight: 700; font-size: 0.75rem; margin-bottom: 0.2rem; line-height: 1.2; }
+        .price-label { color: #000; font-size: 0.7rem; font-style: italic; line-height: 1.2; }
+        
+        .leaflet-popup-content-wrapper { border-radius: 12px; }
+        
+        /* ===== LEGEND PANEL ===== */
+        .legend-panel {
+            position: fixed; bottom: 2rem; left: 1rem; background: white;
+            border-radius: 14px; padding: 14px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 1000; max-width: 220px;
+            font-size: 0.75rem; transition: all 0.3s ease;
+        }
+        .legend-title {
+            font-weight: 700; font-size: 0.8rem; color: #0a2463;
+            margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+        }
+        .legend-row {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 5px; color: #444;
+        }
+        .legend-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .legend-toggle {
+            position: fixed; bottom: 2rem; left: 1rem; background: white;
+            border: none; width: 44px; height: 44px; border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;
+            display: none; align-items: center; justify-content: center;
+            z-index: 1001; font-size: 1.2rem;
+        }
+        
+        /* ===== FILTER DROPDOWN ===== */
+        .filter-wrapper {
+            position: fixed; top: 4.5rem; left: 1rem;
+            z-index: 1000;
+        }
+        .filter-toggle-btn {
+            background: white; border: none; padding: 0.5rem 1rem;
+            border-radius: 8px; font-family: 'Varela Round', sans-serif;
+            font-weight: 600; font-size: 0.85rem; color: #0a2463;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer;
+            display: flex; align-items: center; gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .filter-toggle-btn:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+        .filter-toggle-btn .arrow { 
+            transition: transform 0.3s ease; font-size: 0.6rem;
+        }
+        .filter-toggle-btn.open .arrow { transform: rotate(180deg); }
+        .filter-dropdown {
+            margin-top: 6px; background: white; border-radius: 12px;
+            padding: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            display: none; flex-direction: column; gap: 3px;
+            min-width: 170px;
+            animation: dropIn 0.2s ease-out;
+        }
+        .filter-dropdown.open { display: flex; }
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .filter-btn {
+            background: #f1f5f9; border: none; padding: 8px 14px;
+            border-radius: 10px; font-family: 'Varela Round', sans-serif;
+            font-size: 0.78rem; cursor: pointer; color: #475569;
+            transition: all 0.2s ease; white-space: nowrap;
+            text-align: left; display: flex; align-items: center; gap: 8px;
+        }
+        .filter-btn:hover { background: #e2e8f0; }
+        .filter-btn.active { background: #0a2463; color: white; }
+        .filter-count {
+            margin-left: auto; font-size: 0.65rem; opacity: 0.7;
+            background: rgba(0,0,0,0.08); padding: 1px 6px; border-radius: 8px;
+        }
+        .filter-btn.active .filter-count { background: rgba(255,255,255,0.2); }
+        
+        /* ===== COMPARE PANEL ===== */
+        .compare-panel {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+            z-index: 1002; transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            max-height: 50vh; overflow-y: auto;
+            padding: 0 16px 20px 16px;
+        }
+        .compare-panel.open { transform: translateY(0); }
+        .compare-handle {
+            width: 40px; height: 4px; background: #cbd5e1;
+            border-radius: 2px; margin: 10px auto 12px auto;
+            cursor: pointer;
+        }
+        .compare-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px;
+        }
+        .compare-title { font-weight: 700; font-size: 1rem; color: #0a2463; }
+        .compare-close {
+            background: #f1f5f9; border: none; width: 32px; height: 32px;
+            border-radius: 50%; cursor: pointer; font-size: 1.1rem; color: #64748b;
+        }
+        .compare-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .compare-card {
+            background: #f8fafc; border-radius: 12px; padding: 12px;
+            border-left: 4px solid #ccc; position: relative;
+        }
+        .compare-card-name { font-weight: 700; font-size: 0.85rem; color: #1e293b; margin-bottom: 4px; }
+        .compare-card-price { font-size: 1.3rem; font-weight: 700; margin-bottom: 2px; }
+        .compare-card-type { font-size: 0.65rem; color: #64748b; }
+        .compare-card-trend { font-size: 0.7rem; font-weight: 600; margin-top: 4px; }
+        .compare-card-remove {
+            position: absolute; top: 6px; right: 8px; background: none; border: none;
+            font-size: 0.8rem; color: #94a3b8; cursor: pointer;
+        }
+        .compare-card-remove:hover { color: #ef4444; }
+        
+        /* Compare FAB */
+        .compare-fab {
+            position: fixed; bottom: 5.5rem; right: 1rem;
+            background: #0a2463; color: white; border: none;
+            padding: 10px 16px; border-radius: 25px;
+            font-family: 'Varela Round', sans-serif; font-size: 0.8rem;
+            font-weight: 600; cursor: pointer; z-index: 1001;
+            box-shadow: 0 4px 14px rgba(10,36,99,0.4);
+            display: none; align-items: center; gap: 6px;
+            transition: all 0.3s ease;
+        }
+        .compare-fab:hover { transform: scale(1.05); }
+        .compare-badge {
+            background: #ef4444; color: white; width: 20px; height: 20px;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 0.7rem;
+        }
+        
+        /* ===== DATA SOURCE TAG ===== */
+        .data-source {
+            position: fixed; bottom: 0.5rem; left: 50%; transform: translateX(-50%);
+            background: rgba(255,255,255,0.9); padding: 3px 12px;
+            border-radius: 10px; font-size: 0.6rem; color: #94a3b8;
+            z-index: 999; white-space: nowrap;
+        }
+        
+        @media (max-width: 768px) {
+            .locate-button { bottom: 1.5rem; right: 1rem; width: 45px; height: 45px; }
+            .location-hint { bottom: 5rem; right: 1rem; font-size: 0.75rem; max-width: 180px; }
+            .logo { font-size: 3rem; }
+            .engineer-name { font-size: 0.7rem; }
+            .price-label { font-size: 0.65rem; }
+            .legend-panel { display: none; }
+            .legend-toggle { display: flex; }
+            .filter-wrapper { top: 4rem; }
+            .filter-toggle-btn { font-size: 0.8rem; padding: 0.45rem 0.85rem; }
+            .filter-btn { font-size: 0.72rem; padding: 7px 12px; }
+            .compare-fab { bottom: 4.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← Volver</a>
+    
+    <!-- Info Card -->
+    <div class="info-card">
+        <div class="logo">⚜</div>
+        <div class="engineer-name">Ing. Sergeo Olivera Sagastegui</div>
+        <div class="price-label">Precios por metro cuadrado</div>
+    </div>
+    
+    <!-- Filter Dropdown -->
+    <div class="filter-wrapper" id="filterWrapper">
+        <button class="filter-toggle-btn" id="filterToggle" onclick="toggleFilterDropdown()">
+            🔍 Filtrar <span class="arrow">▼</span>
+        </button>
+        <div class="filter-dropdown" id="filterDropdown">
+            <button class="filter-btn active" onclick="filterByType('todos', this)">📍 Todos <span class="filter-count" id="count-todos"></span></button>
+            <button class="filter-btn" onclick="filterByType('urbano', this)">🏙️ Urbano <span class="filter-count" id="count-urbano"></span></button>
+            <button class="filter-btn" onclick="filterByType('residencial', this)">🏡 Residencial <span class="filter-count" id="count-residencial"></span></button>
+            <button class="filter-btn" onclick="filterByType('comercial', this)">🏢 Comercial <span class="filter-count" id="count-comercial"></span></button>
+            <button class="filter-btn" onclick="filterByType('rural', this)">🌿 Rural <span class="filter-count" id="count-rural"></span></button>
+        </div>
+    </div>
+    
+    <div id="map"></div>
+    
+    <!-- Legend Panel -->
+    <div class="legend-panel" id="legendPanel">
+        <div class="legend-title">🗺️ Precio por m²</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#ef4444;"></div> S/ 2,000+ (Premium)</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#f59e0b;"></div> S/ 500 – 2,000</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#10b981;"></div> S/ 100 – 500</div>
+        <div class="legend-row"><div class="legend-dot" style="background:#6366f1;"></div> &lt; S/ 100 (Rural)</div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0;font-size:0.65rem;color:#94a3b8;">
+            Toca un marcador para comparar zonas →
+        </div>
+    </div>
+    
+    <!-- Legend Toggle (mobile) -->
+    <button class="legend-toggle" id="legendToggle" onclick="toggleLegend()">🗺️</button>
+    
+    <!-- Compare FAB -->
+    <button class="compare-fab" id="compareFab" onclick="openCompare()">
+        ⚖️ Comparar <span class="compare-badge" id="compareBadge">0</span>
+    </button>
+    
+    <!-- Compare Panel -->
+    <div class="compare-panel" id="comparePanel">
+        <div class="compare-handle" onclick="closeCompare()"></div>
+        <div class="compare-header">
+            <div class="compare-title">⚖️ Comparador de Zonas</div>
+            <button class="compare-close" onclick="closeCompare()">✕</button>
+        </div>
+        <div class="compare-grid" id="compareGrid"></div>
+    </div>
+    
+    <!-- Location Hint Tooltip -->
+    <div class="location-hint" id="locationHint" onclick="clickLocationHint()">
+        ¿Quieres saber dónde estás? ¡Clic aquí!
+    </div>
+    
+    <!-- Geolocation Button -->
+    <button class="locate-button" onclick="locateUser()" id="locateBtn" title="Mi ubicación">
+        <svg class="locate-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+    
+    <!-- Data source -->
+    <div class="data-source" id="dataSource">
+        Fuentes: Urbania · AdondeVivir · InfoCasas · Properati · FazWaz · Doomos · Terra Inmob. · Mitula · Trovit · Nuroa · LaEncontre — Abr 2026
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // ============================================
+        //  MARKET DATA — Cajamarca Region
+        //  Scraped from: Urbania, AdondeVivir, InfoCasas
+        //  Date: April 2026
+        // ============================================
+        var marketData = [
+            // =============================================
+            //  CAJAMARCA CIUDAD — CENTRO & COMERCIAL
+            // =============================================
+            { id:'c01', name:'Centro – Zona UPN/Real Plaza', district:'Cajamarca', lat:-7.1638, lng:-78.5003,
+              pricePEN:2660, priceUSD:700, type:'comercial', zone:'Urbano Comercial', areaTypical:'200–500 m²',
+              trend:'+8%', trendDir:'up', source:'AdondeVivir', notes:'320 m², $700/m². Cerca UPN, Real Plaza, Alas Peruanas.' },
+            { id:'c02', name:'Centro Histórico', district:'Cajamarca', lat:-7.1620, lng:-78.5128,
+              pricePEN:2800, priceUSD:737, type:'urbano', zone:'Urbano Premium', areaTypical:'150–400 m²',
+              trend:'+5%', trendDir:'up', source:'Urbania', notes:'Promedio Urbania S/2,801/m². Oferta limitada zona monumental.' },
+            { id:'c03', name:'Jr. San Martín', district:'Cajamarca', lat:-7.1612, lng:-78.5145,
+              pricePEN:2623, priceUSD:690, type:'urbano', zone:'Urbano Centro', areaTypical:'61 m²',
+              trend:'+5%', trendDir:'up', source:'Properati/Mitula', notes:'Lote 61m² a S/160,000. Jr. San Martín, acceso asfaltado, servicios completos.' },
+            { id:'c04', name:'Jr. José Gálvez – San Pedro', district:'Cajamarca', lat:-7.1605, lng:-78.5155,
+              pricePEN:2500, priceUSD:658, type:'urbano', zone:'Urbano Consolidado', areaTypical:'370 m²',
+              trend:'+4%', trendDir:'up', source:'AdondeVivir', notes:'5 cuadras Plaza de Armas. 372.70m². Ideal proyecto inmobiliario.' },
+            { id:'c05', name:'Av. 13 de Julio', district:'Cajamarca', lat:-7.1598, lng:-78.5100,
+              pricePEN:2500, priceUSD:658, type:'comercial', zone:'Urbano Comercial', areaTypical:'1,195 m²',
+              trend:'+6%', trendDir:'up', source:'AdondeVivir', notes:'Corazón de la ciudad. 1,195m² con 568m² construidos. Alta valorización.' },
+            { id:'c06', name:'La Justicia – Lot. La Alameda', district:'Cajamarca', lat:-7.1640, lng:-78.5070,
+              pricePEN:2200, priceUSD:579, type:'residencial', zone:'Urbano Residencial', areaTypical:'210 m²',
+              trend:'+6%', trendDir:'up', source:'AdondeVivir', notes:'Zona tranquila. Casa 210m² terreno. A 10 cuadras Plaza de Armas.' },
+            // =============================================
+            //  CAJAMARCA — AV. HOYOS RUBIO / AEROPUERTO
+            // =============================================
+            { id:'c07', name:'Av. Hoyos Rubio', district:'Cajamarca', lat:-7.1495, lng:-78.4890,
+              pricePEN:595, priceUSD:156, type:'comercial', zone:'Urbano Mixto', areaTypical:'5,000 m²',
+              trend:'+6%', trendDir:'up', source:'AdondeVivir', notes:'5,000m² a US$156/m² (S/2.65M). Ideal condominio, recreativo, deportivo.' },
+            { id:'c08', name:'Av. Aviación', district:'Cajamarca', lat:-7.1510, lng:-78.4870,
+              pricePEN:1900, priceUSD:500, type:'comercial', zone:'Comercial Premium', areaTypical:'500+ m²',
+              trend:'+5%', trendDir:'up', source:'Trovit/FazWaz', notes:'Desde 500m² a $500/m². Zona aeropuerto con alta demanda comercial.' },
+            { id:'c09', name:'Av. Héroes del Cenepa', district:'Cajamarca', lat:-7.1530, lng:-78.4920,
+              pricePEN:1300, priceUSD:342, type:'urbano', zone:'Urbano Emergente', areaTypical:'234 m²',
+              trend:'+10%', trendDir:'up', source:'Trovit', notes:'234m² a S/1,300/m². Escritura de propiedad. Cruz Blanca.' },
+            // =============================================
+            //  CAJAMARCA — MOLLEPAMPA / BELLA UNIÓN
+            // =============================================
+            { id:'c10', name:'Mollepampa', district:'Cajamarca', lat:-7.1770, lng:-78.5020,
+              pricePEN:740, priceUSD:195, type:'urbano', zone:'Urbano Residencial', areaTypical:'540 m²',
+              trend:'+8%', trendDir:'up', source:'AdondeVivir', notes:'540m² con 140m² construido. Cerca Plaza de Armas y UNC.' },
+            { id:'c11', name:'Bella Unión – CITV El Cumbe', district:'Cajamarca', lat:-7.1680, lng:-78.4980,
+              pricePEN:1100, priceUSD:289, type:'urbano', zone:'Urbano Residencial', areaTypical:'124 m²',
+              trend:'+9%', trendDir:'up', source:'Trovit', notes:'124m² a S/1,100/m². Zona consolidada cerca CITV.' },
+            { id:'c12', name:'Sector Columbo', district:'Cajamarca', lat:-7.1690, lng:-78.5040,
+              pricePEN:1209, priceUSD:318, type:'urbano', zone:'Urbano Comercial', areaTypical:'771 m²',
+              trend:'+5%', trendDir:'up', source:'Terra Inmob.', notes:'771m² a $318/m². A 1 cuadra vía evitamiento. Cercado con local.' },
+            // =============================================
+            //  CAJAMARCA — URB. EL PINAR / UNC
+            // =============================================
+            { id:'c13', name:'Urb. El Pinar', district:'Cajamarca', lat:-7.1720, lng:-78.5150,
+              pricePEN:1140, priceUSD:300, type:'residencial', zone:'Urbano Residencial', areaTypical:'120–250 m²',
+              trend:'+12%', trendDir:'up', source:'InfoCasas', notes:'Lotes 120-250m² desde $300/m². Pistas, veredas, servicios. Cerca UNC.' },
+            { id:'c14', name:'Urb. Docentes', district:'Cajamarca', lat:-7.1750, lng:-78.5130,
+              pricePEN:950, priceUSD:250, type:'residencial', zone:'Urbano Residencial', areaTypical:'150–300 m²',
+              trend:'+10%', trendDir:'up', source:'Doomos', notes:'A 10 min del centro. Zona universitaria en expansión.' },
+            // =============================================
+            //  CAJAMARCA — SANTA BÁRBARA / SIERRA VERDE
+            // =============================================
+            { id:'c15', name:'Santa Bárbara (aeropuerto)', district:'Cajamarca', lat:-7.1440, lng:-78.4820,
+              pricePEN:122, priceUSD:32, type:'rural', zone:'Rural Extenso', areaTypical:'7,600 m²',
+              trend:'+15%', trendDir:'up', source:'Terra Inmob.', notes:'7,600m² a S/32/m². Detrás aeropuerto. Ojo de agua, hermosa vista.' },
+            { id:'c16', name:'Res. Sierra Verde – Tartar', district:'Cajamarca', lat:-7.1460, lng:-78.4790,
+              pricePEN:760, priceUSD:200, type:'residencial', zone:'Residencial Exclusivo', areaTypical:'500 m²',
+              trend:'+8%', trendDir:'up', source:'Doomos', notes:'500m² en esquina. Pasando aeropuerto camino al Porongo.' },
+            // =============================================
+            //  CAJAMARCA — HUACARIZ / ISCOCONGA
+            // =============================================
+            { id:'c17', name:'Huacariz San Antonio', district:'Cajamarca', lat:-7.1850, lng:-78.4850,
+              pricePEN:680, priceUSD:179, type:'residencial', zone:'Rural / Casa Campo', areaTypical:'500–1,500 m²',
+              trend:'+7%', trendDir:'up', source:'InfoCasas', notes:'Casas de campo con áreas verdes y piscina. 1,000m² terreno.' },
+            { id:'c18', name:'Iscoconga', district:'Cajamarca', lat:-7.1900, lng:-78.4780,
+              pricePEN:500, priceUSD:132, type:'rural', zone:'Comercial Rural', areaTypical:'700 m²',
+              trend:'+12%', trendDir:'up', source:'Doomos', notes:'700m² con proyección comercial. Frente a restaurante Punta Hermosa.' },
+            // =============================================
+            //  CAJAMARCA — JR. MAYOPATA / RECOLETA
+            // =============================================
+            { id:'c19', name:'Jr. Mayopata – Raimondi', district:'Cajamarca', lat:-7.1625, lng:-78.5170,
+              pricePEN:2800, priceUSD:737, type:'urbano', zone:'Urbano Centro', areaTypical:'48–57 m²',
+              trend:'+3%', trendDir:'up', source:'Terra Inmob.', notes:'Lotes pequeños urbanos interiores. Cerca colegio Raimondi.' },
+            { id:'c20', name:'Pje. Apocalipsis / Las Delicias', district:'Cajamarca', lat:-7.1650, lng:-78.5085,
+              pricePEN:1500, priceUSD:395, type:'urbano', zone:'Urbano Residencial', areaTypical:'145 m²',
+              trend:'+6%', trendDir:'up', source:'Terra Inmob.', notes:'145m². A 2 cuadras de Numay Hotel y Vía Evitamiento.' },
+            // =============================================
+            //  CAJAMARCA — SANTA ELENA / AJOSCANCHA
+            // =============================================
+            { id:'c21', name:'Santa Elena – Sector 12', district:'Cajamarca', lat:-7.1780, lng:-78.4960,
+              pricePEN:500, priceUSD:132, type:'urbano', zone:'Urbano Emergente', areaTypical:'110 m²',
+              trend:'+18%', trendDir:'up', source:'Mitula', notes:'110m². A 10 min del centro. Zona de expansión, docs saneados.' },
+            { id:'c22', name:'Ajoscancha', district:'Cajamarca', lat:-7.1800, lng:-78.5060,
+              pricePEN:400, priceUSD:105, type:'rural', zone:'Rural Lotizable', areaTypical:'1,600 m²',
+              trend:'+14%', trendDir:'up', source:'Terra Inmob.', notes:'Terreno para lotizar (12 lotes). Escritura pública.' },
+            // =============================================
+            //  BAÑOS DEL INCA — CENTRO
+            // =============================================
+            { id:'b01', name:'Baños del Inca Centro', district:'Baños del Inca', lat:-7.1645, lng:-78.4685,
+              pricePEN:1330, priceUSD:350, type:'residencial', zone:'Urbano Residencial', areaTypical:'200–600 m²',
+              trend:'+9%', trendDir:'up', source:'InfoCasas', notes:'Cerca Plaza de Armas. Pistas, veredas, servicios completos.' },
+            { id:'b02', name:'Jr. Lizardo Arana', district:'Baños del Inca', lat:-7.1650, lng:-78.4670,
+              pricePEN:2850, priceUSD:750, type:'comercial', zone:'Comercial Centro', areaTypical:'200 m²',
+              trend:'+4%', trendDir:'up', source:'FazWaz', notes:'200m² a $150,000. Zona más comercial de Baños del Inca.' },
+            { id:'b03', name:'Urb. El Chirimoyo', district:'Baños del Inca', lat:-7.1660, lng:-78.4660,
+              pricePEN:1140, priceUSD:300, type:'residencial', zone:'Urbano Residencial', areaTypical:'200–1,800 m²',
+              trend:'+8%', trendDir:'up', source:'InfoCasas', notes:'4 lotes (200-1800m²) a $300/m². Cercados, 3 cuadras de la plaza.' },
+            { id:'b04', name:'Jr. Abraham Noriega', district:'Baños del Inca', lat:-7.1640, lng:-78.4690,
+              pricePEN:1200, priceUSD:316, type:'residencial', zone:'Urbano Residencial', areaTypical:'150–300 m²',
+              trend:'+7%', trendDir:'up', source:'InfoCasas', notes:'Excelente zona residencial. Pistas, veredas, agua, luz.' },
+            // =============================================
+            //  BAÑOS DEL INCA — CONDOMINIOS
+            // =============================================
+            { id:'b05', name:'Cond. Capistrano', district:'Baños del Inca', lat:-7.1680, lng:-78.4620,
+              pricePEN:1520, priceUSD:400, type:'residencial', zone:'Residencial Exclusivo', areaTypical:'500+ m²',
+              trend:'+4%', trendDir:'up', source:'InfoCasas', notes:'Condominio cerrado, vigilancia 24h. Lotes desde 500m².' },
+            { id:'b06', name:'Cond. La Hacienda', district:'Baños del Inca', lat:-7.1500, lng:-78.4740,
+              pricePEN:437, priceUSD:115, type:'residencial', zone:'Residencial Campestre', areaTypical:'1,000 m²',
+              trend:'+10%', trendDir:'up', source:'FazWaz', notes:'Desde $115/m². Solo 44 familias. Naturaleza y tranquilidad.' },
+            { id:'b07', name:'Cond. La Merced – Otuzco', district:'Baños del Inca', lat:-7.1400, lng:-78.4710,
+              pricePEN:400, priceUSD:105, type:'residencial', zone:'Residencial Campestre', areaTypical:'500–1,000 m²',
+              trend:'+12%', trendDir:'up', source:'Terra Inmob.', notes:'Cerca entrada aeropuerto. Campiña verde, doble frontis.' },
+            // =============================================
+            //  BAÑOS DEL INCA — TARTAR / PORONGO
+            // =============================================
+            { id:'b08', name:'Tartar Chico', district:'Baños del Inca', lat:-7.1520, lng:-78.4650,
+              pricePEN:500, priceUSD:132, type:'residencial', zone:'Urbano Residencial', areaTypical:'120–250 m²',
+              trend:'+15%', trendDir:'up', source:'InfoCasas', notes:'A 1 cuadra viaducto La Unión. Calles pavimentadas. SUNARP.' },
+            { id:'b09', name:'Tartar Grande – Villa Cariño', district:'Baños del Inca', lat:-7.1480, lng:-78.4700,
+              pricePEN:2280, priceUSD:600, type:'residencial', zone:'Residencial Campestre', areaTypical:'200–500 m²',
+              trend:'+5%', trendDir:'up', source:'Terra Inmob.', notes:'Lotes 200m² ($600/m²) y 500m² ($600/m²). Cerca Porongo.' },
+            { id:'b10', name:'Huayrapongo – Porongo', district:'Baños del Inca', lat:-7.1470, lng:-78.4730,
+              pricePEN:570, priceUSD:150, type:'residencial', zone:'Residencial Campestre', areaTypical:'1,000+ m²',
+              trend:'+8%', trendDir:'up', source:'Terra Inmob.', notes:'Lotes 1,000m² a $150/m². Urbanización cerrada, campiña.' },
+            // =============================================
+            //  BAÑOS DEL INCA — KM 5 / MANCO CAPAC
+            // =============================================
+            { id:'b11', name:'Baños del Inca Km 5', district:'Baños del Inca', lat:-7.1560, lng:-78.4530,
+              pricePEN:1710, priceUSD:450, type:'comercial', zone:'Comercial / Industrial', areaTypical:'2,000–5,000 m²',
+              trend:'+3%', trendDir:'up', source:'AdondeVivir', notes:'5,000m² a $450/m². Cambio de uso comercial/industrial.' },
+            { id:'b12', name:'Av. Manco Capac', district:'Baños del Inca', lat:-7.1590, lng:-78.4580,
+              pricePEN:627, priceUSD:165, type:'urbano', zone:'Urbano Extenso', areaTypical:'5,000–20,000 m²',
+              trend:'+5%', trendDir:'up', source:'AdondeVivir', notes:'20,407m² a $165/m². 3 frentes, manantial, servicios públicos.' },
+            { id:'b13', name:'Cercado Baños del Inca (agrícola)', district:'Baños del Inca', lat:-7.1635, lng:-78.4640,
+              pricePEN:1330, priceUSD:350, type:'urbano', zone:'Agrícola/Residencial', areaTypical:'2,400 m²',
+              trend:'+6%', trendDir:'up', source:'AdondeVivir', notes:'2,400m² a $350/m². Zona agrícola, zonificación residencial.' },
+            // =============================================
+            //  BAÑOS DEL INCA — OTUZCO / CHINCHIMACHAY
+            // =============================================
+            { id:'b14', name:'Bajo Otuzco', district:'Baños del Inca', lat:-7.1380, lng:-78.4720,
+              pricePEN:456, priceUSD:120, type:'urbano', zone:'Urbano Emergente', areaTypical:'150–500 m²',
+              trend:'+18%', trendDir:'up', source:'InfoCasas', notes:'Lotización activa. Pistas asfaltadas, agua, luz, alcantarilla.' },
+            { id:'b15', name:'Chinchimachay', district:'Baños del Inca', lat:-7.1420, lng:-78.4680,
+              pricePEN:350, priceUSD:92, type:'rural', zone:'Rural Emergente', areaTypical:'500+ m²',
+              trend:'+20%', trendDir:'up', source:'FazWaz/Mitula', notes:'Alto potencial de desarrollo. Zona de expansión estratégica.' },
+            // =============================================
+            //  BAÑOS DEL INCA — CERRILLO / DAVY
+            // =============================================
+            { id:'b16', name:'Cerrillo – Colegio Davy', district:'Baños del Inca', lat:-7.1540, lng:-78.4760,
+              pricePEN:392, priceUSD:103, type:'residencial', zone:'Residencial Exclusivo', areaTypical:'1,000 m²',
+              trend:'+10%', trendDir:'up', source:'AdondeVivir', notes:'Lotes 1,000m² desde $103,000. Zona más exclusiva. Escritura pública.' },
+            { id:'b17', name:'Ex-Fundo El Cerrillo (parcelas)', district:'Baños del Inca', lat:-7.1510, lng:-78.4780,
+              pricePEN:323, priceUSD:85, type:'rural', zone:'Campestre Parcela', areaTypical:'1,000 m²',
+              trend:'+12%', trendDir:'up', source:'AdondeVivir', notes:'33 parcelas de ~1,000m² a $85/m². Paralelo al aeropuerto. Cerca colegios.' },
+            // =============================================
+            //  BAÑOS DEL INCA — SALAS / ÓVALO
+            // =============================================
+            { id:'b18', name:'Óvalo Baños del Inca – Salas', district:'Baños del Inca', lat:-7.1655, lng:-78.4700,
+              pricePEN:800, priceUSD:210, type:'residencial', zone:'Residencial Campestre', areaTypical:'589 m²',
+              trend:'+7%', trendDir:'up', source:'Terra Inmob.', notes:'589m². A 4 cuadras del óvalo. Campiña verde, árboles, tranquilidad.' },
+            // =============================================
+            //  LLACANORA
+            // =============================================
+            { id:'r01', name:'Llacanora – La Banda', district:'Llacanora', lat:-7.1990, lng:-78.4310,
+              pricePEN:228, priceUSD:60, type:'rural', zone:'Semi-Rústico', areaTypical:'1,140 m²',
+              trend:'+15%', trendDir:'up', source:'AdondeVivir', notes:'1,140m² a $60/m². Cerco vivo, docs registrales y municipales en regla.' },
+            { id:'r02', name:'Sigispampa – Llacanora', district:'Llacanora', lat:-7.2020, lng:-78.4350,
+              pricePEN:300, priceUSD:79, type:'rural', zone:'Rural Casa Campo', areaTypical:'710 m²',
+              trend:'+14%', trendDir:'up', source:'FazWaz', notes:'710m². Agua, electricidad y desagüe en la zona.' },
+            // =============================================
+            //  NAMORA
+            // =============================================
+            { id:'r03', name:'Namora – Los Sapitos', district:'Namora', lat:-7.2050, lng:-78.3280,
+              pricePEN:120, priceUSD:32, type:'rural', zone:'Condominio Rural', areaTypical:'2,726 m²',
+              trend:'+10%', trendDir:'up', source:'Terra Inmob.', notes:'S/120/m². Condominio exclusivo con parques, miradores, jardines.' },
+            { id:'r04', name:'Casa Blanca – Namora', district:'Namora', lat:-7.2070, lng:-78.3310,
+              pricePEN:76, priceUSD:20, type:'rural', zone:'Rural', areaTypical:'2,726 m²',
+              trend:'+8%', trendDir:'up', source:'Terra Inmob.', notes:'$50/m² (US$54,250). Doble esquina, filo pista a San Marcos.' },
+            // =============================================
+            //  JESÚS
+            // =============================================
+            { id:'r05', name:'Jesús – Cajamarca', district:'Jesús', lat:-7.2470, lng:-78.3880,
+              pricePEN:620, priceUSD:163, type:'rural', zone:'Rural Turístico', areaTypical:'1,049 m²',
+              trend:'+10%', trendDir:'up', source:'Nuroa/AdondeVivir', notes:'1,049m² a S/650,000. Proyección de crecimiento. Casa campo o turismo.' },
+            { id:'r06', name:'La Colpa – Jesús', district:'Jesús', lat:-7.2200, lng:-78.4100,
+              pricePEN:200, priceUSD:53, type:'rural', zone:'Rural Turístico', areaTypical:'4,362 m²',
+              trend:'+8%', trendDir:'up', source:'AdondeVivir', notes:'4,362m². Cerca Hacienda La Colpa. Licencia transporte/depósitos.' },
+            // =============================================
+            //  LA ENCAÑADA
+            // =============================================
+            { id:'r07', name:'La Encañada – Polloc', district:'La Encañada', lat:-7.1200, lng:-78.3700,
+              pricePEN:90, priceUSD:24, type:'rural', zone:'Rural', areaTypical:'5,810 m²',
+              trend:'+5%', trendDir:'up', source:'AdondeVivir', notes:'5,810m². Esquina, pozo de agua, quebrada. Vista maravillosa. 25km de BI.' },
+            // =============================================
+            //  YANAMARCA (dato propio)
+            // =============================================
+            { id:'r08', name:'Yanamarca', district:'Llacanora', lat:-7.222635, lng:-78.424366,
+              pricePEN:155, priceUSD:41, type:'rural', zone:'Rural', areaTypical:'1,000 m²',
+              trend:'+10%', trendDir:'up', source:'Doomos + VSOS', notes:'1,000m² a S/155,000. Esquina, SUNARP. Pasando La Colpa.' },
+            // =============================================
+            //  ZONA PREMIUM (dato propio)
+            // =============================================
+            { id:'r09', name:'Zona Premium BDI', district:'Baños del Inca', lat:-7.156774, lng:-78.45253,
+              pricePEN:3700, priceUSD:974, type:'comercial', zone:'Premium Comercial', areaTypical:'Variable',
+              trend:'+2%', trendDir:'up', source:'VerificacionSOS', notes:'Dato propio VerificaciónSOS. Máxima valorización de la zona.' },
+            // =============================================
+            //  DATOS AGREGADOS DE PLATAFORMAS
+            // =============================================
+            { id:'a01', name:'Properati Promedio Cajamarca', district:'Cajamarca', lat:-7.1665, lng:-78.5050,
+              pricePEN:705, priceUSD:186, type:'urbano', zone:'Promedio Mercado', areaTypical:'Variable',
+              trend:'+11.6%', trendDir:'up', source:'Properati', notes:'Precio medio m² terrenos Feb 2026: S/705. +11.6% vs Ene 2026.' },
+            { id:'a02', name:'FazWaz Promedio Cajamarca', district:'Cajamarca', lat:-7.1670, lng:-78.5020,
+              pricePEN:1026, priceUSD:270, type:'urbano', zone:'Promedio Mercado', areaTypical:'Variable',
+              trend:'N/A', trendDir:'up', source:'FazWaz', notes:'Precio medio $270/m². Valor medio propiedad $134,408. 31 activos.' },
+            { id:'a03', name:'Santa Bárbara – Country Club', district:'Cajamarca', lat:-7.1455, lng:-78.4840,
+              pricePEN:5000, priceUSD:1350, type:'residencial', zone:'Residencial Premium', areaTypical:'848 m²',
+              trend:'+3%', trendDir:'up', source:'Terra Inmob.', notes:'848m² con 56ml frontis. Luz, agua, desagüe ya instalado. Ex Country Club.' },
+            // =============================================
+            //  NUEVOS — RONDA 3 DE BÚSQUEDA
+            // =============================================
+            { id:'n01', name:'Ajoscancha (162m²)', district:'Cajamarca', lat:-7.1815, lng:-78.5075,
+              pricePEN:900, priceUSD:237, type:'rural', zone:'Rural Casa Campo', areaTypical:'162 m²',
+              trend:'+10%', trendDir:'up', source:'Inmob. SOLÍS', notes:'162m² a S/146,000. Completamente cerrado, acceso 8m. Clima agradable.' },
+            { id:'n02', name:'Av. Héroes del Cenepa (234m²)', district:'Cajamarca', lat:-7.1535, lng:-78.4915,
+              pricePEN:1923, priceUSD:506, type:'urbano', zone:'Urbano Emergente', areaTypical:'234 m²',
+              trend:'+10%', trendDir:'up', source:'Inmob. SOLÍS', notes:'234m² a S/450,000. Rectangular 6x41m. Escritura propiedad.' },
+            { id:'n03', name:'Av. Hoyos Rubio (con obra)', district:'Cajamarca', lat:-7.1488, lng:-78.4895,
+              pricePEN:820, priceUSD:216, type:'comercial', zone:'Comercial Mixto', areaTypical:'800+ m²',
+              trend:'+7%', trendDir:'up', source:'Nuroa', notes:'S/655,000. Con construcción existente. Ideal proyecto inmobiliario diverso.' },
+            { id:'n04', name:'Qhapac Ñan (8,000m²)', district:'Cajamarca', lat:-7.1735, lng:-78.5095,
+              pricePEN:116, priceUSD:31, type:'rural', zone:'Rural Extenso', areaTypical:'8,000 m²',
+              trend:'+15%', trendDir:'up', source:'Nuroa', notes:'8,000m² a S/925,000. A 5 min del Qhapac Ñan, 10 min del centro. SUNARP.' },
+            { id:'n05', name:'Collpa – Plaza Pecuaria', district:'Cajamarca', lat:-7.1920, lng:-78.4730,
+              pricePEN:400, priceUSD:105, type:'rural', zone:'Rural Comercial', areaTypical:'120 m²',
+              trend:'+12%', trendDir:'up', source:'Terra Inmob.', notes:'120m². Frente a Plaza Pecuaria Iscoconga. Proyección comercial.' },
+            { id:'n06', name:'Miraflores – Otuzco', district:'Baños del Inca', lat:-7.1360, lng:-78.4690,
+              pricePEN:500, priceUSD:132, type:'urbano', zone:'Urbano Emergente', areaTypical:'171 m²',
+              trend:'+18%', trendDir:'up', source:'Terra Inmob.', notes:'171m². Plano, simétrico, con pequeña construcción. Mucha proyección.' },
+            { id:'n07', name:'Colcapampa (1.4 Ha)', district:'Baños del Inca', lat:-7.1350, lng:-78.4550,
+              pricePEN:50, priceUSD:13, type:'rural', zone:'Rural', areaTypical:'14,000 m²',
+              trend:'+8%', trendDir:'up', source:'AdondeVivir', notes:'1.4 hectáreas rural en caserío Colcapampa, BDI.' },
+            { id:'n08', name:'Calle Burmester – BDI', district:'Baños del Inca', lat:-7.1630, lng:-78.4645,
+              pricePEN:640, priceUSD:168, type:'urbano', zone:'Urbano Desarrollo', areaTypical:'1,594 m²',
+              trend:'+10%', trendDir:'up', source:'AdondeVivir', notes:'1,594m². Gran potencial de desarrollo. Sin construir.' },
+            { id:'n09', name:'Terreno Agua Termal – BDI', district:'Baños del Inca', lat:-7.1665, lng:-78.4650,
+              pricePEN:1500, priceUSD:395, type:'comercial', zone:'Turístico', areaTypical:'Variable',
+              trend:'+5%', trendDir:'up', source:'LaEncontre', notes:'Con agua termal. Cerca Hotel Sol de los Incas. Potencial turístico.' },
+            { id:'n10', name:'Namora (6.5 Ha agrícola)', district:'Namora', lat:-7.2080, lng:-78.3260,
+              pricePEN:10, priceUSD:3, type:'rural', zone:'Agrícola', areaTypical:'65,000 m²',
+              trend:'+5%', trendDir:'up', source:'Nuroa', notes:'6.5 Ha a S/650,000 (~S/10/m²). 5 min Plaza Namora. 13h agua riego.' },
+            { id:'n11', name:'Terreno 4.7 Ha – Qhapac Ñan', district:'Cajamarca', lat:-7.1740, lng:-78.5110,
+              pricePEN:80, priceUSD:21, type:'rural', zone:'Rural Gran Escala', areaTypical:'47,000 m²',
+              trend:'+12%', trendDir:'up', source:'Nuroa/LaEncontre', notes:'4.7 Ha. Ideal inmobiliarias, hoteles, logística, entidades. SUNARP.' },
+            { id:'n12', name:'Jr. El Inca (depto)', district:'Cajamarca', lat:-7.1630, lng:-78.5110,
+              pricePEN:2300, priceUSD:605, type:'urbano', zone:'Urbano Centro', areaTypical:'90 m²',
+              trend:'+4%', trendDir:'up', source:'Terra Inmob.', notes:'90m² duplex. 1.5 cuadras del óvalo del Inca. Estilo rústico.' },
+            { id:'n13', name:'Jr. Santa Sarita / San Bernardo', district:'Cajamarca', lat:-7.1645, lng:-78.5095,
+              pricePEN:1350, priceUSD:355, type:'urbano', zone:'Urbano Residencial', areaTypical:'200+ m²',
+              trend:'+6%', trendDir:'up', source:'Terra Inmob.', notes:'3 cuadras Av. San Martín. Zona residencial consolidada.' },
+            { id:'n14', name:'Jr. Los Zafiros / Ibáñez Rosazza', district:'Cajamarca', lat:-7.1660, lng:-78.5060,
+              pricePEN:1800, priceUSD:474, type:'urbano', zone:'Urbano Residencial', areaTypical:'84 m²',
+              trend:'+5%', trendDir:'up', source:'Terra Inmob.', notes:'84.5m². Cerca Av. Manuel Ibáñez Rosazza.' },
+            { id:'n15', name:'Urb. El Ingenio – Jr. Los Pinos', district:'Cajamarca', lat:-7.1580, lng:-78.5050,
+              pricePEN:3500, priceUSD:921, type:'residencial', zone:'Residencial Premium', areaTypical:'300+ m²',
+              trend:'+3%', trendDir:'up', source:'Terra Inmob.', notes:'Casa premium: terraza, jardín, 2 cocheras, 4 hab. Mantenimiento al día.' },
+            { id:'n16', name:'Urb. Eloina Pajares', district:'Cajamarca', lat:-7.1590, lng:-78.5030,
+              pricePEN:2000, priceUSD:526, type:'urbano', zone:'Urbano Consolidado', areaTypical:'200+ m²',
+              trend:'+5%', trendDir:'up', source:'Terra Inmob.', notes:'3 pisos + azotea. Zona urbana consolidada.' },
+            { id:'n17', name:'Res. Las Praderas Park', district:'Cajamarca', lat:-7.1600, lng:-78.5000,
+              pricePEN:2500, priceUSD:658, type:'residencial', zone:'Residencial Premium', areaTypical:'Departamentos',
+              trend:'+4%', trendDir:'up', source:'Terra Inmob.', notes:'Cerca Real Plaza. Gimnasio, sala eventos, ascensor, seguridad 24h.' },
+            { id:'n18', name:'C.C. El Quinde – zona', district:'Cajamarca', lat:-7.1570, lng:-78.4950,
+              pricePEN:1500, priceUSD:395, type:'comercial', zone:'Comercial', areaTypical:'296 m²',
+              trend:'+7%', trendDir:'up', source:'FazWaz', notes:'296m² cerca C.C. El Quinde. Calle asfaltada, alumbrado, desagüe.' },
+            { id:'n19', name:'Metro Supermercado – zona', district:'Cajamarca', lat:-7.1615, lng:-78.5115,
+              pricePEN:2400, priceUSD:632, type:'urbano', zone:'Urbano Consolidado', areaTypical:'785 m²',
+              trend:'+4%', trendDir:'up', source:'AdondeVivir', notes:'785m² terreno, 504m² construido. 10 cuadras Plaza de Armas. 23 años.' },
+            { id:'n20', name:'Sapitos Park – Namora', district:'Namora', lat:-7.2045, lng:-78.3290,
+              pricePEN:130, priceUSD:34, type:'residencial', zone:'Residencial Campestre', areaTypical:'1,212 m²',
+              trend:'+10%', trendDir:'up', source:'LaEncontre/FazWaz', notes:'1,212m² en condominio Sapitos Park. Residencial naturaleza.' },
+            { id:'n21', name:'Puylucana – BDI', district:'Baños del Inca', lat:-7.1700, lng:-78.4580,
+              pricePEN:400, priceUSD:105, type:'rural', zone:'Rural Emergente', areaTypical:'224 m²',
+              trend:'+12%', trendDir:'up', source:'Doomos', notes:'224m² a 1 cuadra plaza Puylucana. 12 min de BDI.' },
+            { id:'n22', name:'San Nicolás – Namora', district:'Namora', lat:-7.2100, lng:-78.3250,
+              pricePEN:100, priceUSD:26, type:'rural', zone:'Turístico', areaTypical:'Variable',
+              trend:'+8%', trendDir:'up', source:'Doomos', notes:'Centro turístico Laguna San Nicolás. La más grande del departamento.' },
+            { id:'n23', name:'Carretera a La Colpa', district:'Cajamarca', lat:-7.1930, lng:-78.4600,
+              pricePEN:350, priceUSD:92, type:'rural', zone:'Rural Expansión', areaTypical:'327 m²',
+              trend:'+10%', trendDir:'up', source:'AdondeVivir', notes:'326.80m². A 100m vía principal. Zona de expansión urbana.' },
+            { id:'n24', name:'Cachimayo – Zona Abogados', district:'Cajamarca', lat:-7.1750, lng:-78.4990,
+              pricePEN:600, priceUSD:158, type:'urbano', zone:'Urbano Emergente', areaTypical:'Variable',
+              trend:'+15%', trendDir:'up', source:'Mitula', notes:'Altura paradero Cachimayo. Cerca Colegio Abogados, Univ. Andina, bancos.' },
+            { id:'n25', name:'Jr. Mariscal Cáceres (3 pisos)', district:'Cajamarca', lat:-7.1610, lng:-78.5140,
+              pricePEN:2800, priceUSD:737, type:'urbano', zone:'Urbano Centro', areaTypical:'200+ m²',
+              trend:'+3%', trendDir:'up', source:'FazWaz', notes:'Casa 3 pisos a precio de terreno. Bases para 6 pisos. Iluminación óptima.' },
+            { id:'n26', name:'Terreno carretera (Agocucho)', district:'Cajamarca', lat:-7.1780, lng:-78.5180,
+              pricePEN:250, priceUSD:66, type:'rural', zone:'Rural Carretera', areaTypical:'1,350 m²',
+              trend:'+10%', trendDir:'up', source:'Doomos', notes:'1,350m² al filo carretera. A 3 cdras iglesia La Cosecha, 10 min Cajamarca.' },
+            { id:'n27', name:'Carretera Cajamarca-BDI', district:'Baños del Inca', lat:-7.1620, lng:-78.4750,
+              pricePEN:300, priceUSD:79, type:'rural', zone:'Desarrollo Urbano', areaTypical:'1,000+ m²',
+              trend:'+15%', trendDir:'up', source:'AdondeVivir', notes:'Colindante carretera. Viviendas desde 1000m², club campestre.' },
+            { id:'n28', name:'La Molina – Santa Bárbara', district:'Cajamarca', lat:-7.1465, lng:-78.4830,
+              pricePEN:400, priceUSD:105, type:'rural', zone:'Campestre', areaTypical:'Variable',
+              trend:'+12%', trendDir:'up', source:'FazWaz', notes:'Urb. Venecia, zona campestre. Gran oportunidad.' },
+            { id:'n29', name:'Shultín – Venecia', district:'Baños del Inca', lat:-7.1550, lng:-78.4770,
+              pricePEN:350, priceUSD:92, type:'rural', zone:'Campestre Exclusivo', areaTypical:'Variable',
+              trend:'+10%', trendDir:'up', source:'FazWaz', notes:'Ideal casa de campo en sitio exclusivo.' },
+            { id:'n30', name:'Condominio (cond. privado) Tartar', district:'Baños del Inca', lat:-7.1490, lng:-78.4720,
+              pricePEN:450, priceUSD:118, type:'residencial', zone:'Condominio Campestre', areaTypical:'500–1,000 m²',
+              trend:'+8%', trendDir:'up', source:'Terra Inmob.', notes:'Condominio privado con parques, jardines, portón. Registros públicos.' },
+            { id:'n31', name:'El Tambo (C.P.)', district:'Cajamarca', lat:-7.1900, lng:-78.5200,
+              pricePEN:150, priceUSD:39, type:'rural', zone:'Rural Periurbano', areaTypical:'Variable',
+              trend:'+10%', trendDir:'up', source:'Nuroa', notes:'Centro Poblado El Tambo. Zona de expansión periurbana.' },
+            { id:'n32', name:'Cajabamba – Pampa Chica', district:'Cajabamba', lat:-7.6240, lng:-78.0510,
+              pricePEN:349, priceUSD:92, type:'rural', zone:'Rural / Bosque', areaTypical:'21,200 m²',
+              trend:'+5%', trendDir:'up', source:'InfoCasas', notes:'21,200m² (2.12Ha) bosque eucalipto. S/7.4M. Cerca UNC Cajabamba.' },
+            { id:'n33', name:'Jaén – Plaza de Armas (3 cdras)', district:'Jaén', lat:-5.7076, lng:-78.8072,
+              pricePEN:4180, priceUSD:1100, type:'comercial', zone:'Comercial Premium', areaTypical:'1,908 m²',
+              trend:'+4%', trendDir:'up', source:'Mitula/Trovit', notes:'1,908m² a $1,100/m². 2 frentes, 3 cdras plaza. SUNARP.' },
+            { id:'n34', name:'Jaén – Urb. Monterrico', district:'Jaén', lat:-5.7100, lng:-78.8050,
+              pricePEN:283, priceUSD:74, type:'urbano', zone:'Urbano Residencial', areaTypical:'120–21,800 m²',
+              trend:'+8%', trendDir:'up', source:'InfoCasas', notes:'Lotes residenciales y comerciales. 5 min Plaza de Armas. Desde S/65,000.' },
+            { id:'n35', name:'Carretera Cajamarca-Otuzco (89 USD/m²)', district:'Baños del Inca', lat:-7.1395, lng:-78.4680,
+              pricePEN:338, priceUSD:89, type:'rural', zone:'Casa Campo/Hotel', areaTypical:'7,000 m²',
+              trend:'+8%', trendDir:'up', source:'Doomos', notes:'7,000m² a $89/m². Ideal casa campo u hotel en carretera.' }
+        ];
+
+        // ============================================
+        //  STATE
+        // ============================================
+        let mapInstance = null;
+        let userMarker = null;
+        let allMarkers = [];
+        let compareList = [];
+        let currentFilter = 'todos';
+        let legendVisible = true;
+
+        // ============================================
+        //  COLOR SCALE
+        // ============================================
+        function getColor(price) {
+            if (price >= 2000) return '#ef4444';
+            if (price >= 500) return '#f59e0b';
+            if (price >= 100) return '#10b981';
+            return '#6366f1';
+        }
+
+        function getTrendIcon(dir) {
+            return dir === 'up' ? '📈' : dir === 'down' ? '📉' : '➡️';
+        }
+
+        // ============================================
+        //  MAP INIT
+        // ============================================
+        function initMap() {
+            if (typeof L === 'undefined') {
+                document.getElementById('map').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;"><h2 style="color:#ef4444;">Error al cargar el mapa</h2><button onclick="location.reload()" style="margin-top:20px;padding:10px 20px;background:#0a2463;color:white;border:none;border-radius:8px;cursor:pointer;">Recargar</button></div>';
+                return;
+            }
+
+            try {
+                var map = L.map('map').setView([-7.17, -78.48], 13);
+                mapInstance = map;
+
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+                    maxZoom: 20,
+                    attribution: '© OpenStreetMap © CARTO',
+                    subdomains: 'abcd'
+                }).addTo(map);
+
+                // Add all markers
+                marketData.forEach(function(point) {
+                    addMarker(point, map);
+                });
+
+                // Airbnb-style declutter on zoom
+                map.on('zoomend moveend', function() {
+                    declutterMarkers();
+                });
+                // Initial declutter
+                setTimeout(declutterMarkers, 300);
+
+                console.log('🎉 Mapa cargado con ' + marketData.length + ' zonas de precio');
+                showLocationHint();
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+            }
+        }
+
+        // ============================================
+        //  AIRBNB-STYLE DECLUTTER
+        //  At low zoom: show fewer markers (cheapest per area)
+        //  As you zoom in: progressively reveal all
+        // ============================================
+        function declutterMarkers() {
+            if (!mapInstance) return;
+            var zoom = mapInstance.getZoom();
+            var bounds = mapInstance.getBounds();
+            
+            // Determine how many markers to show based on zoom
+            // zoom 10-11 = very zoomed out → show ~8
+            // zoom 12 = ~15
+            // zoom 13 = ~25
+            // zoom 14 = ~40
+            // zoom 15+ = show all
+            var maxVisible;
+            if (zoom >= 16) maxVisible = 999;
+            else if (zoom >= 15) maxVisible = 80;
+            else if (zoom >= 14) maxVisible = 45;
+            else if (zoom >= 13) maxVisible = 25;
+            else if (zoom >= 12) maxVisible = 15;
+            else maxVisible = 8;
+            
+            // Get markers in current view
+            var visibleMarkers = [];
+            var outOfView = [];
+            
+            allMarkers.forEach(function(marker) {
+                var data = marker._priceData;
+                var latlng = marker.getLatLng();
+                
+                // Respect active filter
+                if (currentFilter !== 'todos' && data.type !== currentFilter) {
+                    marker.setOpacity(0.15);
+                    if (marker.getElement()) marker.getElement().style.pointerEvents = 'none';
+                    return;
+                }
+                
+                // Check if in bounds
+                if (bounds.contains(latlng)) {
+                    visibleMarkers.push(marker);
+                } else {
+                    outOfView.push(marker);
+                }
+            });
+            
+            // Hide out-of-view markers
+            outOfView.forEach(function(m) {
+                m.setOpacity(0);
+                if (m.getElement()) m.getElement().style.pointerEvents = 'none';
+            });
+            
+            if (visibleMarkers.length <= maxVisible) {
+                // Show all in view
+                visibleMarkers.forEach(function(m) {
+                    m.setOpacity(1);
+                    if (m.getElement()) m.getElement().style.pointerEvents = 'auto';
+                });
+                return;
+            }
+            
+            // Too many — need to declutter
+            // Strategy: use a grid. Divide the view into cells, keep only 
+            // the cheapest marker per cell (like Airbnb shows representative prices)
+            var ne = bounds.getNorthEast();
+            var sw = bounds.getSouthWest();
+            var gridSize = Math.max(3, Math.floor(Math.sqrt(maxVisible)));
+            var cellW = (ne.lng - sw.lng) / gridSize;
+            var cellH = (ne.lat - sw.lat) / gridSize;
+            
+            // Assign markers to grid cells, pick the cheapest per cell
+            var grid = {};
+            visibleMarkers.forEach(function(m) {
+                var ll = m.getLatLng();
+                var col = Math.floor((ll.lng - sw.lng) / cellW);
+                var row = Math.floor((ll.lat - sw.lat) / cellH);
+                var key = col + '_' + row;
+                
+                if (!grid[key]) {
+                    grid[key] = [];
+                }
+                grid[key].push(m);
+            });
+            
+            var toShow = {};
+            // From each cell, pick the one with the lowest price (most interesting to buyers)
+            for (var key in grid) {
+                var cell = grid[key];
+                cell.sort(function(a, b) { return a._priceData.pricePEN - b._priceData.pricePEN; });
+                toShow[cell[0]._leaflet_id] = true;
+                // If grid allows more, also show the most expensive for contrast
+                if (cell.length > 1 && Object.keys(toShow).length < maxVisible) {
+                    toShow[cell[cell.length - 1]._leaflet_id] = true;
+                }
+            }
+            
+            // Apply visibility
+            visibleMarkers.forEach(function(m) {
+                if (toShow[m._leaflet_id]) {
+                    m.setOpacity(1);
+                    if (m.getElement()) m.getElement().style.pointerEvents = 'auto';
+                } else {
+                    m.setOpacity(0);
+                    if (m.getElement()) m.getElement().style.pointerEvents = 'none';
+                }
+            });
+        }
+
+        function addMarker(point, map) {
+            var color = getColor(point.pricePEN);
+            var priceFormatted = point.pricePEN.toLocaleString('es-PE');
+            
+            var myIcon = L.divIcon({
+                className: 'price-marker',
+                html: '<div style="background:' + color + ';color:white;padding:4px 10px;border-radius:12px;font-weight:600;font-size:11px;box-shadow:0 2px 8px rgba(0,0,0,0.3);border:2px solid white;font-family:Varela Round,sans-serif;white-space:nowrap;display:inline-block;line-height:1;cursor:pointer;transition:transform 0.2s;">' + priceFormatted + '</div>',
+                iconSize: [null, 24],
+                iconAnchor: [30, 24]
+            });
+
+            var marker = L.marker([point.lat, point.lng], { icon: myIcon }).addTo(map);
+            
+            var isInCompare = compareList.some(function(c) { return c.id === point.id; });
+            var compareBtn = isInCompare 
+                ? '<div style="background:#e2e8f0;color:#64748b;padding:8px;border-radius:8px;text-align:center;font-size:0.75rem;margin-top:8px;">✓ En comparador</div>'
+                : '<button onclick="addToCompare(\'' + point.id + '\')" style="background:#0a2463;color:white;border:none;padding:8px 16px;border-radius:8px;font-family:Varela Round,sans-serif;font-size:0.75rem;cursor:pointer;width:100%;margin-top:8px;font-weight:600;">⚖️ Agregar al comparador</button>';
+
+            var popupContent = '<div style="font-family:Varela Round,sans-serif;min-width:220px;max-width:260px;">' +
+                '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+                    '<div>' +
+                        '<h3 style="margin:0;color:#0a2463;font-size:1rem;line-height:1.2;">' + point.name + '</h3>' +
+                        '<span style="font-size:0.7rem;color:#64748b;">' + point.district + ' · ' + point.zone + '</span>' +
+                    '</div>' +
+                    '<span style="font-size:0.65rem;background:#f1f5f9;padding:2px 6px;border-radius:6px;color:#64748b;white-space:nowrap;">' + point.source + '</span>' +
+                '</div>' +
+                '<div style="background:' + color + ';color:white;padding:10px 16px;border-radius:14px;text-align:center;margin:8px 0;">' +
+                    '<div style="font-size:1.5rem;font-weight:700;line-height:1;">S/ ' + priceFormatted + '<span style="font-size:0.7rem;font-weight:400;">/m²</span></div>' +
+                    '<div style="font-size:0.7rem;opacity:0.9;margin-top:2px;">US$ ' + point.priceUSD.toLocaleString('en-US') + '/m²</div>' +
+                '</div>' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;font-size:0.72rem;">' +
+                    '<div style="background:#f8fafc;padding:6px 8px;border-radius:8px;"><span style="color:#94a3b8;">Área típica</span><br><strong>' + point.areaTypical + '</strong></div>' +
+                    '<div style="background:#f8fafc;padding:6px 8px;border-radius:8px;"><span style="color:#94a3b8;">Tendencia</span><br><strong style="color:' + (point.trendDir === 'up' ? '#10b981' : '#ef4444') + ';">' + getTrendIcon(point.trendDir) + ' ' + point.trend + ' anual</strong></div>' +
+                '</div>' +
+                '<p style="margin:6px 0;color:#64748b;font-size:0.7rem;line-height:1.3;">' + point.notes + '</p>' +
+                '<p style="margin:4px 0 8px;color:#94a3b8;font-size:0.6rem;">📍 ' + point.lat.toFixed(6) + ', ' + point.lng.toFixed(6) + '</p>' +
+                compareBtn +
+                '</div>';
+
+            marker.bindPopup(popupContent, { maxWidth: 280 });
+            
+            marker._priceData = point;
+            allMarkers.push(marker);
+        }
+
+        // ============================================
+        //  FILTER DROPDOWN
+        // ============================================
+        function toggleFilterDropdown() {
+            var dropdown = document.getElementById('filterDropdown');
+            var toggle = document.getElementById('filterToggle');
+            var isOpen = dropdown.classList.contains('open');
+            
+            if (isOpen) {
+                dropdown.classList.remove('open');
+                toggle.classList.remove('open');
+            } else {
+                dropdown.classList.add('open');
+                toggle.classList.add('open');
+                updateFilterCounts();
+            }
+        }
+        
+        // Close dropdown when clicking elsewhere on the map
+        document.addEventListener('click', function(e) {
+            var wrapper = document.getElementById('filterWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('filterDropdown').classList.remove('open');
+                document.getElementById('filterToggle').classList.remove('open');
+            }
+        });
+        
+        function updateFilterCounts() {
+            var counts = { todos: marketData.length, urbano: 0, residencial: 0, comercial: 0, rural: 0 };
+            marketData.forEach(function(p) { if (counts[p.type] !== undefined) counts[p.type]++; });
+            for (var key in counts) {
+                var el = document.getElementById('count-' + key);
+                if (el) el.textContent = counts[key];
+            }
+        }
+
+        function filterByType(type, btnElement) {
+            currentFilter = type;
+            
+            // Update buttons
+            document.querySelectorAll('.filter-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            if (btnElement) btnElement.classList.add('active');
+            
+            // Update toggle label
+            var labels = { todos:'📍 Todos', urbano:'🏙️ Urbano', residencial:'🏡 Residencial', comercial:'🏢 Comercial', rural:'🌿 Rural' };
+            document.getElementById('filterToggle').innerHTML = (labels[type] || '🔍 Filtrar') + ' <span class="arrow">▼</span>';
+            
+            // Re-run declutter which respects the filter
+            declutterMarkers();
+            
+            // Close dropdown after selection
+            document.getElementById('filterDropdown').classList.remove('open');
+            document.getElementById('filterToggle').classList.remove('open');
+        }
+
+        // ============================================
+        //  COMPARE
+        // ============================================
+        function addToCompare(id) {
+            var point = marketData.find(function(p) { return p.id === id; });
+            if (!point) return;
+            
+            // Check if already in compare
+            if (compareList.some(function(c) { return c.id === id; })) return;
+            
+            // Max 4 items
+            if (compareList.length >= 4) {
+                compareList.shift();
+            }
+            
+            compareList.push(point);
+            updateCompareFab();
+            renderCompare();
+            
+            // Close popup
+            if (mapInstance) mapInstance.closePopup();
+            
+            // Show compare panel if 2+ items
+            if (compareList.length >= 2) {
+                openCompare();
+            }
+        }
+
+        function removeFromCompare(id) {
+            compareList = compareList.filter(function(c) { return c.id !== id; });
+            updateCompareFab();
+            renderCompare();
+            if (compareList.length === 0) closeCompare();
+        }
+
+        function updateCompareFab() {
+            var fab = document.getElementById('compareFab');
+            var badge = document.getElementById('compareBadge');
+            
+            if (compareList.length > 0) {
+                fab.style.display = 'flex';
+                badge.textContent = compareList.length;
+            } else {
+                fab.style.display = 'none';
+            }
+        }
+
+        function renderCompare() {
+            var grid = document.getElementById('compareGrid');
+            if (!grid) return;
+            
+            // Sort by price descending
+            var sorted = compareList.slice().sort(function(a, b) { return b.pricePEN - a.pricePEN; });
+            
+            var html = '';
+            sorted.forEach(function(item) {
+                var color = getColor(item.pricePEN);
+                html += '<div class="compare-card" style="border-left-color:' + color + ';">' +
+                    '<button class="compare-card-remove" onclick="removeFromCompare(\'' + item.id + '\')">✕</button>' +
+                    '<div class="compare-card-name">' + item.name + '</div>' +
+                    '<div class="compare-card-price" style="color:' + color + ';">S/ ' + item.pricePEN.toLocaleString('es-PE') + '/m²</div>' +
+                    '<div class="compare-card-type">' + item.zone + ' · ' + item.district + '</div>' +
+                    '<div class="compare-card-trend" style="color:' + (item.trendDir === 'up' ? '#10b981' : '#ef4444') + ';">' + getTrendIcon(item.trendDir) + ' ' + item.trend + ' anual</div>' +
+                    '</div>';
+            });
+            
+            // Add ratio if 2+ items
+            if (sorted.length >= 2) {
+                var maxP = sorted[0].pricePEN;
+                var minP = sorted[sorted.length - 1].pricePEN;
+                var ratio = (maxP / minP).toFixed(1);
+                html += '<div style="grid-column:1/-1;background:#f0f4ff;border-radius:12px;padding:12px;text-align:center;font-size:0.8rem;color:#0a2463;">' +
+                    '📊 <strong>' + sorted[0].name + '</strong> es <strong>' + ratio + 'x</strong> más caro que <strong>' + sorted[sorted.length-1].name + '</strong>' +
+                    '</div>';
+            }
+            
+            grid.innerHTML = html;
+        }
+
+        function openCompare() {
+            document.getElementById('comparePanel').classList.add('open');
+        }
+        function closeCompare() {
+            document.getElementById('comparePanel').classList.remove('open');
+        }
+
+        // ============================================
+        //  LEGEND TOGGLE (mobile)
+        // ============================================
+        function toggleLegend() {
+            var panel = document.getElementById('legendPanel');
+            var toggle = document.getElementById('legendToggle');
+            if (legendVisible) {
+                panel.style.display = 'none';
+                legendVisible = false;
+            } else {
+                panel.style.display = 'block';
+                legendVisible = true;
+            }
+        }
+
+        // ============================================
+        //  GEOLOCATION (kept from original)
+        // ============================================
+        function showLocationHint() {
+            var hint = document.getElementById('locationHint');
+            if (!hint) return;
+            setTimeout(function() {
+                hint.style.display = 'block';
+                setTimeout(function() { hideLocationHint(); }, 8000);
+            }, 2000);
+        }
+        function hideLocationHint() {
+            var hint = document.getElementById('locationHint');
+            if (!hint) return;
+            hint.classList.add('hidden');
+            setTimeout(function() { hint.style.display = 'none'; }, 400);
+        }
+        function clickLocationHint() {
+            hideLocationHint();
+            locateUser();
+        }
+        function locateUser() {
+            var button = document.getElementById('locateBtn');
+            if (!mapInstance) { alert('El mapa aún no está listo.'); return; }
+            if (!navigator.geolocation) { alert('Tu navegador no soporta geolocalización.'); return; }
+            button.classList.add('loading');
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    if (userMarker) mapInstance.removeLayer(userMarker);
+                    var userIcon = L.divIcon({
+                        className: 'user-location-marker',
+                        html: '<div style="background:#4285F4;width:20px;height:20px;border-radius:50%;border:4px solid white;box-shadow:0 0 0 2px #4285F4,0 4px 8px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [28, 28], iconAnchor: [14, 14]
+                    });
+                    userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(mapInstance);
+                    userMarker.bindPopup('<div style="text-align:center;font-family:Varela Round,sans-serif;"><strong style="color:#4285F4;">📍 Tu ubicación</strong><br><span style="font-size:0.85rem;color:#666;">Estás aquí</span></div>').openPopup();
+                    mapInstance.flyTo([lat, lng], 15, { duration: 1.5 });
+                    button.classList.remove('loading');
+                },
+                function(error) {
+                    button.classList.remove('loading');
+                    var msg = 'No se pudo obtener tu ubicación.';
+                    if (error.code === error.PERMISSION_DENIED) msg = 'Permite el acceso a tu ubicación en la configuración del navegador.';
+                    alert(msg);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        // ============================================
+        //  BOOT
+        // ============================================
+        var attempts = 0;
+        var maxAttempts = 10;
+        function tryInit() {
+            attempts++;
+            if (typeof L !== 'undefined') { initMap(); }
+            else if (attempts < maxAttempts) { setTimeout(tryInit, 200); }
+            else {
+                document.getElementById('map').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;"><h2 style="color:#ef4444;">No se pudo cargar Leaflet</h2><button onclick="location.reload()" style="margin-top:20px;padding:10px 20px;background:#0a2463;color:white;border:none;border-radius:8px;cursor:pointer;">Recargar</button></div>';
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', tryInit);
+        } else { tryInit(); }
+    </script>
+</body>
+</html>
