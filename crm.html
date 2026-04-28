@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CRM VSP">
+<title>CRM · verificacionsos.pe</title>
+<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: #2a2a38;
+    --accent: #e8ff47;
+    --accent2: #47c8ff;
+    --accent3: #ff6b47;
+    --text: #f0f0f8;
+    --muted: #6b6b88;
+    --pending: #ff6b47;
+    --process: #47c8ff;
+    --done: #4dff91;
+    --radius: 14px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* AUTH SCREEN */
+  .auth-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 999;
+  }
+
+  .auth-screen.hidden { display: none; }
+
+  .auth-logo {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .auth-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 40px;
+  }
+
+  .auth-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+  }
+
+  .auth-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .auth-desc {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+    max-width: 280px;
+    margin-bottom: 32px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .auth-desc.error { color: var(--pending); }
+
+  .btn-google {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    color: #333;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    margin-bottom: 16px;
+  }
+
+  .btn-google:active { transform: scale(0.97); opacity: 0.9; }
+  .btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-google svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  .btn-back {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .auth-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TOPBAR */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: calc(var(--safe-top) + 12px) 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-home {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 15px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+
+  .btn-home:hover { border-color: var(--accent2); }
+
+  .brand { display: flex; flex-direction: column; }
+  .brand-name { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .brand-sub { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 10px 5px 5px;
+  }
+
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .user-name {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .btn-new {
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.1s, opacity 0.1s;
+  }
+
+  .btn-new:active { transform: scale(0.95); opacity: 0.85; }
+
+  /* STATS */
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .stats-row::-webkit-scrollbar { display: none; }
+
+  .stat-chip {
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .stat-chip.active { border-color: var(--accent); background: rgba(232,255,71,0.07); }
+  .stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .stat-label { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; }
+  .stat-count { font-size: 15px; font-weight: 700; }
+
+  /* SEARCH */
+  .search-wrap { padding: 8px 20px 12px; }
+  .search-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent2); }
+  .search-input::placeholder { color: var(--muted); }
+
+  /* BOARD */
+  .board { padding: 4px 20px calc(var(--safe-bottom) + 80px); display: flex; flex-direction: column; gap: 8px; }
+
+  .col-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 0 8px; }
+  .col-title { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+  .col-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .col-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); background: var(--surface2); border-radius: 6px; padding: 2px 7px; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.25s ease;
+  }
+
+  @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .card.pendiente::before { background: var(--pending); }
+  .card.proceso::before { background: var(--process); }
+  .card.terminado::before { background: var(--done); }
+  .card:active { transform: scale(0.98); }
+  .card.card-urgent { background: rgba(255,107,71,0.06); border-color: rgba(255,107,71,0.3); }
+
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .card-name { font-size: 15px; font-weight: 700; line-height: 1.3; flex: 1; }
+  .card-menu-btn { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1; flex-shrink: 0; }
+  .card-client { font-size: 12px; color: var(--accent2); font-family: 'DM Mono', monospace; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+  .card-client::before { content: '●'; font-size: 6px; }
+  .card-notes { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; white-space: pre-wrap; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 8px; }
+  .card-type { font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; background: var(--surface2); border-radius: 6px; padding: 3px 8px; color: var(--muted); }
+  .card-date { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); }
+  .urgent-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--pending); background: rgba(255,107,71,0.15); border-radius: 5px; padding: 2px 7px; }
+
+  .empty-col { border: 1px dashed var(--border); border-radius: var(--radius); padding: 24px; text-align: center; color: var(--muted); font-size: 12px; font-family: 'DM Mono', monospace; }
+
+  /* MODAL */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 200;
+    display: flex; align-items: flex-end;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    padding: 20px 20px calc(var(--safe-bottom) + 24px);
+    transform: translateY(30px);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    max-height: 90dvh;
+    overflow-y: auto;
+  }
+  .overlay.open .modal { transform: translateY(0); }
+
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 18px; color: var(--accent); }
+
+  .field-group { margin-bottom: 14px; }
+  .field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 6px; display: block; font-family: 'DM Mono', monospace; }
+  .field-input, .field-select, .field-textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px; color: var(--text);
+    font-family: 'Syne', sans-serif; font-size: 14px; outline: none;
+    transition: border-color 0.2s; -webkit-appearance: none;
+  }
+  .field-input:focus, .field-select:focus, .field-textarea:focus { border-color: var(--accent); }
+  .field-textarea { resize: none; height: 80px; font-size: 13px; font-family: 'DM Mono', monospace; line-height: 1.5; }
+  .field-select option { background: var(--surface2); color: var(--text); }
+
+  .status-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .status-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 6px; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; transition: all 0.15s; text-align: center; }
+  .status-btn.active-pendiente { background: rgba(255,107,71,0.15); border-color: var(--pending); color: var(--pending); }
+  .status-btn.active-proceso { background: rgba(71,200,255,0.15); border-color: var(--process); color: var(--process); }
+  .status-btn.active-terminado { background: rgba(77,255,145,0.15); border-color: var(--done); color: var(--done); }
+
+  .urgent-toggle { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .toggle-label { font-size: 12px; font-weight: 700; color: var(--muted); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; }
+  .toggle { width: 40px; height: 22px; background: var(--surface2); border: 1px solid var(--border); border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s; }
+  .toggle.on { background: var(--pending); border-color: var(--pending); }
+  .toggle-thumb { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: transform 0.2s; }
+  .toggle.on .toggle-thumb { transform: translateX(18px); }
+
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+  .btn-cancel { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 13px; color: var(--muted); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .btn-save { background: var(--accent); border: none; border-radius: 10px; padding: 13px; color: #0a0a0f; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; cursor: pointer; transition: opacity 0.15s; }
+  .btn-save:active { opacity: 0.8; }
+
+  /* CONTEXT MENU */
+  .ctx-overlay { position: fixed; inset: 0; z-index: 300; display: flex; align-items: flex-end; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .ctx-overlay.open { opacity: 1; pointer-events: all; }
+  .ctx-menu { background: var(--surface); border: 1px solid var(--border); border-radius: 20px 20px 0 0; width: 100%; padding: 20px 20px calc(var(--safe-bottom) + 20px); transform: translateY(20px); transition: transform 0.25s ease; }
+  .ctx-overlay.open .ctx-menu { transform: translateY(0); }
+  .ctx-project-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .ctx-btn { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; padding: 13px 0; color: var(--text); font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--border); text-align: left; }
+  .ctx-btn:last-child { border-bottom: none; }
+  .ctx-btn.danger { color: var(--pending); }
+  .ctx-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .quick-status { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 10px 0 4px; }
+  .qs-btn { border: 1px solid var(--border); border-radius: 8px; padding: 8px 4px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .qs-btn[data-s="pendiente"] { background: rgba(255,107,71,0.1); border-color: rgba(255,107,71,0.3); color: var(--pending); }
+  .qs-btn[data-s="proceso"] { background: rgba(71,200,255,0.1); border-color: rgba(71,200,255,0.3); color: var(--process); }
+  .qs-btn[data-s="terminado"] { background: rgba(77,255,145,0.1); border-color: rgba(77,255,145,0.3); color: var(--done); }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-logo">verificacionsos.pe</div>
+  <div class="auth-sub">CRM · Gestión de Proyectos</div>
+  <div id="authSpinner" class="auth-spinner"></div>
+  <div id="authIcon" class="auth-icon" style="display:none">🔒</div>
+  <div id="authTitle" class="auth-title" style="display:none">Acceso Privado</div>
+  <p id="authDesc" class="auth-desc" style="display:none">Verificando sesión...</p>
+  <button class="btn-google" id="btnGoogle" style="display:none" onclick="loginWithGoogle()">
+    <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    <span id="googleBtnText">Iniciar sesión con Google</span>
+  </button>
+  <button class="btn-back" id="btnBack" style="display:none" onclick="window.location.href='index.html'">← Volver al inicio</button>
+</div>
+
+<!-- APP (hidden until auth passes) -->
+<div id="app" style="display:none">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="btn-home" title="Inicio">←</a>
+      <div class="brand">
+        <span class="brand-name">Proyectos</span>
+        <span class="brand-sub">verificacionsos.pe</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="user-chip" id="userChip" style="display:none">
+        <img class="user-avatar" id="userAvatar" src="" alt="">
+        <span class="user-name" id="userName"></span>
+      </div>
+      <button class="btn-new" onclick="openNew()">+ Nuevo</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-chip active" data-filter="all" onclick="setFilter('all', this)">
+      <span class="stat-dot" style="background:var(--accent)"></span>
+      <span class="stat-label">Todos</span>
+      <span class="stat-count" id="cnt-all">0</span>
+    </div>
+    <div class="stat-chip" data-filter="pendiente" onclick="setFilter('pendiente', this)">
+      <span class="stat-dot" style="background:var(--pending)"></span>
+      <span class="stat-label">Pendiente</span>
+      <span class="stat-count" id="cnt-pendiente">0</span>
+    </div>
+    <div class="stat-chip" data-filter="proceso" onclick="setFilter('proceso', this)">
+      <span class="stat-dot" style="background:var(--process)"></span>
+      <span class="stat-label">En Proceso</span>
+      <span class="stat-count" id="cnt-proceso">0</span>
+    </div>
+    <div class="stat-chip" data-filter="terminado" onclick="setFilter('terminado', this)">
+      <span class="stat-dot" style="background:var(--done)"></span>
+      <span class="stat-label">Terminado</span>
+      <span class="stat-count" id="cnt-terminado">0</span>
+    </div>
+    <div class="stat-chip" data-filter="urgent" onclick="setFilter('urgent', this)">
+      <span class="stat-dot" style="background:var(--pending)"></span>
+      <span class="stat-label">🔥 Urgente</span>
+      <span class="stat-count" id="cnt-urgent">0</span>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <input class="search-input" type="text" id="searchInput" placeholder="Buscar proyecto o cliente…" oninput="render()">
+  </div>
+
+  <!-- BOARD -->
+  <div class="board" id="board"></div>
+
+</div><!-- /app -->
+
+<!-- MODAL NUEVO / EDITAR -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle">Nuevo Proyecto</div>
+    <div class="field-group">
+      <label class="field-label">Nombre del Proyecto *</label>
+      <input class="field-input" id="f-name" placeholder="Ej: Proyecto Sarin · Lote 12" maxlength="80">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Cliente *</label>
+      <input class="field-input" id="f-client" placeholder="Nombre o empresa" maxlength="60">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Tipo de Trabajo</label>
+      <select class="field-select" id="f-type">
+        <option value="dron">🚁 Dron / Fotogrametría</option>
+        <option value="gis">🗺 GIS / Planos</option>
+        <option value="web">💻 Web / App</option>
+        <option value="consulta">📋 Consultoría</option>
+        <option value="otro">📦 Otro</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Estado</label>
+      <div class="status-row">
+        <button class="status-btn active-pendiente" data-s="pendiente" onclick="selectStatus('pendiente')">Pendiente</button>
+        <button class="status-btn" data-s="proceso" onclick="selectStatus('proceso')">En Proceso</button>
+        <button class="status-btn" data-s="terminado" onclick="selectStatus('terminado')">Terminado</button>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Contacto / Teléfono</label>
+      <input class="field-input" id="f-contact" placeholder="+51 999 999 999" maxlength="40">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Notas</label>
+      <textarea class="field-textarea" id="f-notes" placeholder="Detalles, pendientes, coordenadas, precio…"></textarea>
+    </div>
+    <div class="urgent-toggle">
+      <span class="toggle-label">🔥 Urgente</span>
+      <div class="toggle" id="urgentToggle" onclick="toggleUrgent()">
+        <div class="toggle-thumb"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveProject()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="ctx-overlay" id="ctxOverlay" onclick="closeCtx()">
+  <div class="ctx-menu" onclick="event.stopPropagation()">
+    <div class="ctx-project-name" id="ctxName">—</div>
+    <div style="margin-bottom:8px">
+      <div style="font-size:10px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px;">Cambiar estado rápido</div>
+      <div class="quick-status">
+        <button class="qs-btn" data-s="pendiente" onclick="quickStatus('pendiente')">Pendiente</button>
+        <button class="qs-btn" data-s="proceso" onclick="quickStatus('proceso')">En Proceso</button>
+        <button class="qs-btn" data-s="terminado" onclick="quickStatus('terminado')">Terminado</button>
+      </div>
+    </div>
+    <button class="ctx-btn" onclick="editFromCtx()">
+      <div class="ctx-icon" style="background:rgba(232,255,71,0.1)">✏️</div>
+      Editar proyecto
+    </button>
+    <button class="ctx-btn danger" onclick="deleteFromCtx()">
+      <div class="ctx-icon" style="background:rgba(255,107,71,0.1)">🗑</div>
+      Eliminar
+    </button>
+    <button class="ctx-btn" onclick="closeCtx()">
+      <div class="ctx-icon" style="background:var(--surface2)">✕</div>
+      Cerrar
+    </button>
+  </div>
+</div>
+
+<!-- Firebase Auth -->
+<script type="module">
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, getDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYHXbX2Ra8RMF_un8N610jEjsDn9Rvw0U",
+  authDomain: "verificacionsos-d55a6.firebaseapp.com",
+  projectId: "verificacionsos-d55a6",
+  storageBucket: "verificacionsos-d55a6.firebasestorage.app",
+  messagingSenderId: "17499432341",
+  appId: "1:17499432341:web:147e6abbc7b3dff3fb829c"
+};
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+async function checkIfAuthorized(email) {
+  try {
+    const snap = await getDoc(doc(db, 'panel_config', 'authorized_emails'));
+    if (!snap.exists()) return false;
+    const emails = snap.data().emails || [];
+    return emails.includes(email);
+  } catch (e) {
+    console.error('Error verificando autorización:', e);
+    return false;
+  }
+}
+
+function showAuthUI(mode, msg) {
+  document.getElementById('authSpinner').style.display = 'none';
+  document.getElementById('authIcon').style.display = 'block';
+  document.getElementById('authTitle').style.display = 'block';
+  const desc = document.getElementById('authDesc');
+  desc.style.display = 'block';
+  desc.textContent = msg;
+  if (mode === 'login') {
+    document.getElementById('authTitle').textContent = 'Acceso Privado';
+    document.getElementById('authIcon').textContent = '🔒';
+    desc.className = 'auth-desc';
+    document.getElementById('btnGoogle').style.display = 'flex';
+    document.getElementById('btnBack').style.display = 'inline-block';
+  } else if (mode === 'denied') {
+    document.getElementById('authTitle').textContent = 'Sin Acceso';
+    document.getElementById('authIcon').textContent = '⛔';
+    desc.className = 'auth-desc error';
+    document.getElementById('btnGoogle').style.display = 'none';
+    document.getElementById('btnBack').style.display = 'inline-block';
+  }
+}
+
+function launchApp(user) {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('app').style.display = 'block';
+  // Show user chip
+  const chip = document.getElementById('userChip');
+  const avatar = document.getElementById('userAvatar');
+  const nameEl = document.getElementById('userName');
+  if (user.photoURL) { avatar.src = user.photoURL; chip.style.display = 'flex'; }
+  nameEl.textContent = user.displayName?.split(' ')[0] || user.email.split('@')[0];
+}
+
+window.loginWithGoogle = async function() {
+  const btn = document.getElementById('btnGoogle');
+  const txt = document.getElementById('googleBtnText');
+  txt.textContent = 'Verificando...';
+  btn.disabled = true;
+  try {
+    const result = await signInWithPopup(auth, provider);
+    // onAuthStateChanged will handle the rest
+  } catch (e) {
+    txt.textContent = 'Iniciar sesión con Google';
+    btn.disabled = false;
+    if (e.code !== 'auth/popup-closed-by-user') {
+      document.getElementById('authDesc').textContent = 'Error al iniciar sesión. Intenta de nuevo.';
+    }
+  }
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    showAuthUI('login', 'Solo usuarios autorizados de verificacionsos.pe pueden acceder.');
+    return;
+  }
+  // User is logged in — check authorization
+  const isAuth = await checkIfAuthorized(user.email);
+  if (isAuth) {
+    launchApp(user);
+  } else {
+    showAuthUI('denied', `Tu cuenta (${user.email}) no tiene permisos para el CRM. Contacta al administrador.`);
+    await auth.signOut();
+  }
+});
+</script>
+
+<script>
+// ── CRM STATE & LOGIC ────────────────────────────────────────────────
+const STORE_KEY = 'crm_vsp_v1';
+let projects = [];
+let filter = 'all';
+let editingId = null;
+let ctxId = null;
+let formStatus = 'pendiente';
+let formUrgent = false;
+
+const TYPES = { dron: '🚁 Dron', gis: '🗺 GIS', web: '💻 Web', consulta: '📋 Consultoría', otro: '📦 Otro' };
+
+function load() {
+  try { projects = JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch { projects = []; }
+}
+
+function save() { localStorage.setItem(STORE_KEY, JSON.stringify(projects)); }
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function today() { return new Date().toLocaleDateString('es-PE', { day:'2-digit', month:'short' }); }
+
+function setFilter(f, el) {
+  filter = f;
+  document.querySelectorAll('.stat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function render() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const counts = { all: projects.length, pendiente: 0, proceso: 0, terminado: 0, urgent: 0 };
+  projects.forEach(p => { counts[p.status]++; if (p.urgent) counts.urgent++; });
+  document.getElementById('cnt-all').textContent = counts.all;
+  document.getElementById('cnt-pendiente').textContent = counts.pendiente;
+  document.getElementById('cnt-proceso').textContent = counts.proceso;
+  document.getElementById('cnt-terminado').textContent = counts.terminado;
+  document.getElementById('cnt-urgent').textContent = counts.urgent;
+
+  let filtered = projects.filter(p => {
+    if (filter === 'urgent') return p.urgent;
+    if (filter !== 'all') return p.status === filter;
+    return true;
+  });
+  if (q) filtered = filtered.filter(p =>
+    p.name.toLowerCase().includes(q) || p.client.toLowerCase().includes(q) || (p.notes||'').toLowerCase().includes(q)
+  );
+
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+
+  if (filter === 'all' || filter === 'urgent') {
+    const cols = filter === 'urgent'
+      ? [['pendiente','🔥 Urgentes Pendientes'],['proceso','🔥 Urgentes En Proceso']]
+      : [['pendiente','Pendiente'],['proceso','En Proceso'],['terminado','Terminado']];
+    cols.forEach(([s, label]) => {
+      const items = filtered.filter(p => p.status === s);
+      const colEl = document.createElement('div');
+      const dotColor = s==='pendiente'?'pending':s==='proceso'?'process':'done';
+      colEl.innerHTML = `
+        <div class="col-header">
+          <div class="col-title"><span class="col-dot" style="background:var(--${dotColor})"></span>${label}</div>
+          <span class="col-count">${items.length}</span>
+        </div>
+      `;
+      if (items.length === 0) {
+        colEl.innerHTML += `<div class="empty-col">Sin proyectos aquí</div>`;
+      } else {
+        items.forEach(p => colEl.appendChild(makeCard(p)));
+      }
+      board.appendChild(colEl);
+    });
+  } else {
+    if (filtered.length === 0) {
+      board.innerHTML = `<div class="empty-col" style="margin-top:20px">Sin proyectos en esta categoría</div>`;
+    } else {
+      filtered.forEach(p => board.appendChild(makeCard(p)));
+    }
+  }
+}
+
+function makeCard(p) {
+  const el = document.createElement('div');
+  el.className = `card ${p.status}${p.urgent ? ' card-urgent' : ''}`;
+  el.innerHTML = `
+    <div class="card-header">
+      <div class="card-name">${esc(p.name)}</div>
+      <button class="card-menu-btn" onclick="openCtx('${p.id}', event)">⋯</button>
+    </div>
+    <div class="card-client">${esc(p.client)}</div>
+    ${p.notes ? `<div class="card-notes">${esc(p.notes)}</div>` : ''}
+    <div class="card-footer">
+      <span class="card-type">${TYPES[p.type] || p.type}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        ${p.urgent ? '<span class="urgent-badge">🔥 Urgente</span>' : ''}
+        <span class="card-date">${p.date}</span>
+      </div>
+    </div>
+  `;
+  el.addEventListener('click', (e) => { if (e.target.classList.contains('card-menu-btn')) return; openEdit(p.id); });
+  return el;
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function openNew() {
+  editingId = null; formStatus = 'pendiente'; formUrgent = false;
+  document.getElementById('modalTitle').textContent = 'Nuevo Proyecto';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-client').value = '';
+  document.getElementById('f-type').value = 'dron';
+  document.getElementById('f-contact').value = '';
+  document.getElementById('f-notes').value = '';
+  syncStatusBtns(); syncUrgentToggle();
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(() => document.getElementById('f-name').focus(), 350);
+}
+
+function openEdit(id) {
+  const p = projects.find(x => x.id === id); if (!p) return;
+  editingId = id; formStatus = p.status; formUrgent = p.urgent;
+  document.getElementById('modalTitle').textContent = 'Editar Proyecto';
+  document.getElementById('f-name').value = p.name;
+  document.getElementById('f-client').value = p.client;
+  document.getElementById('f-type').value = p.type;
+  document.getElementById('f-contact').value = p.contact || '';
+  document.getElementById('f-notes').value = p.notes || '';
+  syncStatusBtns(); syncUrgentToggle();
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+function handleOverlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+
+function selectStatus(s) { formStatus = s; syncStatusBtns(); }
+function syncStatusBtns() {
+  document.querySelectorAll('.status-btn').forEach(b => {
+    b.className = 'status-btn';
+    if (b.dataset.s === formStatus) b.classList.add(`active-${formStatus}`);
+  });
+}
+function toggleUrgent() { formUrgent = !formUrgent; syncUrgentToggle(); }
+function syncUrgentToggle() {
+  const t = document.getElementById('urgentToggle');
+  formUrgent ? t.classList.add('on') : t.classList.remove('on');
+}
+
+function saveProject() {
+  const name = document.getElementById('f-name').value.trim();
+  const client = document.getElementById('f-client').value.trim();
+  if (!name || !client) { alert('Nombre y cliente son obligatorios.'); return; }
+  if (editingId) {
+    const p = projects.find(x => x.id === editingId);
+    if (p) { p.name = name; p.client = client; p.type = document.getElementById('f-type').value; p.status = formStatus; p.contact = document.getElementById('f-contact').value.trim(); p.notes = document.getElementById('f-notes').value.trim(); p.urgent = formUrgent; }
+  } else {
+    projects.unshift({ id: uid(), name, client, type: document.getElementById('f-type').value, status: formStatus, contact: document.getElementById('f-contact').value.trim(), notes: document.getElementById('f-notes').value.trim(), urgent: formUrgent, date: today() });
+  }
+  save(); closeModal(); render();
+}
+
+function openCtx(id, e) { e.stopPropagation(); ctxId = id; const p = projects.find(x => x.id === id); document.getElementById('ctxName').textContent = p ? p.name : '—'; document.getElementById('ctxOverlay').classList.add('open'); }
+function closeCtx() { document.getElementById('ctxOverlay').classList.remove('open'); ctxId = null; }
+function quickStatus(s) { const p = projects.find(x => x.id === ctxId); if (p) { p.status = s; save(); render(); } closeCtx(); }
+function editFromCtx() { const id = ctxId; closeCtx(); setTimeout(() => openEdit(id), 150); }
+function deleteFromCtx() { const p = projects.find(x => x.id === ctxId); if (p && confirm(`¿Eliminar "${p.name}"?`)) { projects = projects.filter(x => x.id !== ctxId); save(); render(); } closeCtx(); }
+
+// Init (app renders when auth passes — called from auth module)
+load();
+// Observer: render when app becomes visible
+const appEl = document.getElementById('app');
+const obs = new MutationObserver(() => { if (appEl.style.display !== 'none') { render(); obs.disconnect(); } });
+obs.observe(appEl, { attributes: true, attributeFilter: ['style'] });
+</script>
+</body>
+</html>
