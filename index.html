@@ -2008,7 +2008,7 @@
         /* ===== Galería de Modelos 3D ===== */
         .models3d-feed {
             background: white;
-            padding: 2.5rem 2rem 4rem;
+            padding: 6rem 2rem 4rem;
             min-height: 70vh;
         }
 
@@ -2059,14 +2059,14 @@
             position: relative;
             width: 100%;
             height: 300px;
-            background: linear-gradient(135deg, #e8eef5 0%, #f0f4f8 100%);
+            background: #000000;
         }
 
         .model3d-card model-viewer {
             width: 100%;
             height: 100%;
-            --poster-color: transparent;
-            background: transparent;
+            --poster-color: #000000;
+            background: #000000;
         }
 
         .model3d-ar-badge {
@@ -2817,143 +2817,6 @@
             </div>
         </nav>
     </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Solo Propiedades Verificadas</h1>
-            <p class="hero-subtitle">Tu patrimonio merece una decisión segura. Empieza hoy.</p>
-            
-            <div class="hero-search">
-                <!-- Location Field -->
-                <div class="search-field">
-                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
-                    </svg>
-                    <div class="input-wrapper">
-                        <input type="text" placeholder="Sector - Centro turístico - Distrito - Provincia - Departamento" id="heroSearchLocation" class="field-input" autocomplete="off" onfocus="showLocationSuggestions()" onblur="hideLocationSuggestions()">
-                    </div>
-                    <!-- Location Suggestions Dropdown - MOVED OUTSIDE input-wrapper -->
-                    <div class="search-suggestions" id="locationSuggestions">
-                        <div class="suggestion-item" onmousedown="selectLocation('En la ciudad')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>En la ciudad</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectLocation('Valle Yanamarca')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 17L8 12L12 16L16 12L21 17M3 21h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span>Valle Yanamarca</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectLocation('Hacienda La Colpa')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M9 22V12h6v10M21 12v10M1 12v10" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>Hacienda La Colpa</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectLocation('Llacanora')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M2 20h20M4 20L12 4l8 16M8 14h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span>Llacanora</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectLocation('Baños del Inca')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 3v2M6.34 6.34l-1.41-1.41M4 12H2M6.34 17.66l-1.41 1.41M12 22v-2M19.07 18.93l1.41 1.41M22 12h-2M19.07 5.07l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>Baños del Inca</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Divider -->
-                <div class="search-divider"></div>
-                
-                <!-- Area Field -->
-                <div class="search-field">
-                    <span class="field-text-icon">m²</span>
-                    <div class="input-wrapper">
-                        <input type="text" placeholder="¿Cuál es el área aproximada que estás buscando?" id="heroSearchArea" class="field-input" autocomplete="off" onfocus="showAreaSuggestions()" onblur="hideAreaSuggestions()">
-                    </div>
-                    <!-- Area Suggestions Dropdown - MOVED OUTSIDE input-wrapper -->
-                    <div class="search-suggestions" id="areaSuggestions">
-                        <div class="suggestion-item" onmousedown="selectArea('90 m² +/-')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>90 m² +/-</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectArea('100 m² +/-')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>100 m² +/-</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectArea('200 m² +/-')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M9 22V12h6v10M15 17h4M15 14h4" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>200 m² +/-</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectArea('500 m² +/-')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2.5"/>
-                                <path d="M9 22V12h6v10M9 17h6M9 14h6" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>500 m² +/-</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectArea('1,000 m² +/-')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M2 10l10-8 10 8v11a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2.5"/>
-                                <path d="M8 22V13h8v9M8 17h8M16 17h4M16 14h4" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>1,000 m² +/-</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectArea('5,000 m² +/-')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M1 11l11-9 11 9v10a2 2 0 01-2 2H3a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2.5"/>
-                                <path d="M7 22V14h10v8M7 18h10M7 15h10M17 18h5M17 15h5" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>5,000 m² +/-</span>
-                        </div>
-                        <div class="suggestion-item" onmousedown="selectArea('1 hectárea o más')">
-                            <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M1 12L12 2l11 10v9a2 2 0 01-2 2H3a2 2 0 01-2-2z" stroke="currentColor" stroke-width="3"/>
-                                <path d="M6 22V15h12v7M6 19h12M6 16h12M18 19h4M18 16h4M18 13h4" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>1 hectárea o más</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Search Button -->
-                <button class="hero-search-button-new" onclick="performSearch()">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;">
-                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-                        <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Map Button in Hero -->
-            <a href="#" onclick="accessMapWithAuth(event)" class="hero-map-button">
-                <svg class="hero-map-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span class="hero-map-text">Ver Mapa Interactivo de Precios</span>
-                <span class="hero-map-arrow">→</span>
-            </a>
-        </div>
-    </section>
 
     <!-- Modelos 3D Section -->
     <section class="models3d-feed" id="inicio">
