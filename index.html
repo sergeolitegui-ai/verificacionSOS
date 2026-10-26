@@ -37,6 +37,8 @@
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <!-- Model Viewer para modelos 3D con auto-rotación y AR -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
     <style>
         :root {
             --primary: #0a2463;
@@ -2003,6 +2005,184 @@
             }
         }
 
+        /* ===== Galería de Modelos 3D ===== */
+        .models3d-feed {
+            background: white;
+            padding: 2.5rem 2rem 4rem;
+            min-height: 70vh;
+        }
+
+        .models3d-header {
+            max-width: 1400px;
+            margin: 0 auto 2.5rem;
+            text-align: center;
+        }
+
+        .models3d-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .models3d-subtitle {
+            color: var(--text-light);
+            font-size: 1.05rem;
+        }
+
+        .models3d-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .model3d-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInCard 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .model3d-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .model3d-viewer-wrap {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #e8eef5 0%, #f0f4f8 100%);
+        }
+
+        .model3d-card model-viewer {
+            width: 100%;
+            height: 100%;
+            --poster-color: transparent;
+            background: transparent;
+        }
+
+        .model3d-ar-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 2px 8px rgba(10, 36, 99, 0.3);
+            z-index: 5;
+        }
+
+        .model3d-ar-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .model3d-info {
+            padding: 1.3rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .model3d-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .model3d-location {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .model3d-location svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .model3d-view-btn {
+            margin-top: auto;
+            width: 100%;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .model3d-view-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .model3d-view-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .models3d-loading,
+        .models3d-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .spinner-3d {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--light);
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .models3d-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .models3d-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .models3d-title { font-size: 1.6rem; }
+            .models3d-subtitle { font-size: 0.9rem; }
+            .model3d-viewer-wrap { height: 280px; }
+        }
+
         /* Smooth scroll */
         html {
             scroll-behavior: smooth;
@@ -2775,10 +2955,18 @@
         </div>
     </section>
 
-    <!-- Property Feed Section -->
-    <section class="property-feed" id="inicio">
-        <div class="feed-container">
-            <!-- Property Feed Cards will be inserted here by JavaScript -->
+    <!-- Modelos 3D Section -->
+    <section class="models3d-feed" id="inicio">
+        <div class="models3d-header">
+            <h2 class="models3d-title">Modelos 3D de Nuestros Proyectos</h2>
+            <p class="models3d-subtitle">Reconstrucciones con drone. Gíralas, acércalas y vélas en Realidad Aumentada.</p>
+        </div>
+        <div class="models3d-grid" id="models3dGrid">
+            <!-- Las tarjetas de modelos 3D se insertan por JavaScript -->
+            <div class="models3d-loading" id="models3dLoading">
+                <div class="spinner-3d"></div>
+                <p>Cargando modelos 3D...</p>
+            </div>
         </div>
     </section>
 
@@ -4215,11 +4403,90 @@
             });
         };
 
-        // Llamar automáticamente cuando el DOM esté listo
+        // ⛔ Feed de propiedades/terrenos DESACTIVADO.
+        // La portada ahora muestra la galería de modelos 3D (ver script más abajo).
+        // Las funciones de Firestore quedan disponibles por si se reactivan en el futuro.
+    </script>
+
+    <!-- ===== Galería de Modelos 3D (lee models.json) ===== -->
+    <script>
+        async function loadModels3D() {
+            const grid = document.getElementById('models3dGrid');
+            const loading = document.getElementById('models3dLoading');
+            if (!grid) return;
+
+            try {
+                const res = await fetch('models.json?v=' + Date.now());
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                const models = (data && data.models) ? data.models : [];
+
+                if (loading) loading.remove();
+
+                if (models.length === 0) {
+                    grid.innerHTML = '<div class="models3d-empty"><p>Aún no hay modelos 3D publicados.</p></div>';
+                    return;
+                }
+
+                models.forEach(function(model, i) {
+                    grid.appendChild(createModel3DCard(model, i));
+                });
+            } catch (err) {
+                console.error('Error cargando modelos 3D:', err);
+                if (loading) {
+                    loading.innerHTML = '<p style="color:#c0392b;">No se pudieron cargar los modelos 3D. Recarga la página.</p>';
+                }
+            }
+        }
+
+        function createModel3DCard(model, index) {
+            const card = document.createElement('div');
+            card.className = 'model3d-card';
+            card.style.animationDelay = (index * 0.1) + 's';
+
+            const titulo = model.title || 'Modelo 3D';
+            const ubicacion = model.location || 'Cajamarca';
+            const glb = model.modelPath || '';
+            const usdz = model.iosPath || '';
+            const poster = model.thumbnailPath || '';
+
+            card.innerHTML =
+                '<div class="model3d-viewer-wrap">' +
+                    '<div class="model3d-ar-badge">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5"/><path d="M12 12v9"/><path d="M12 12L4 7.5"/></svg>' +
+                        'AR' +
+                    '</div>' +
+                    '<model-viewer ' +
+                        'src="' + glb + '" ' +
+                        (usdz ? 'ios-src="' + usdz + '" ' : '') +
+                        (poster ? 'poster="' + poster + '" ' : '') +
+                        'alt="' + titulo + '" ' +
+                        'auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" ' +
+                        'camera-controls touch-action="pan-y" ' +
+                        'interaction-prompt="none" ' +
+                        'shadow-intensity="1" exposure="1" ' +
+                        'loading="lazy" reveal="auto">' +
+                    '</model-viewer>' +
+                '</div>' +
+                '<div class="model3d-info">' +
+                    '<h3 class="model3d-name">' + titulo + '</h3>' +
+                    '<div class="model3d-location">' +
+                        '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>' +
+                        '<span>' + ubicacion + '</span>' +
+                    '</div>' +
+                    '<button class="model3d-view-btn" onclick="window.location.href=\'visor-3d.html?id=' + encodeURIComponent(model.id) + '\'">' +
+                        '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                        'Ver en 3D / AR' +
+                    '</button>' +
+                '</div>';
+
+            return card;
+        }
+
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', window.loadPropertiesFromFirestore);
+            document.addEventListener('DOMContentLoaded', loadModels3D);
         } else {
-            window.loadPropertiesFromFirestore();
+            loadModels3D();
         }
     </script>
 
