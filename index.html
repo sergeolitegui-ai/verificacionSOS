@@ -2007,9 +2007,40 @@
 
         /* ===== Galería de Modelos 3D ===== */
         .models3d-feed {
-            background: white;
+            position: relative;
+            background: linear-gradient(180deg, #f4f8fc 0%, #ffffff 55%);
             padding: 6rem 2rem 4rem;
             min-height: 70vh;
+            overflow: hidden;
+        }
+
+        /* Fondo de curvas de nivel topográficas */
+        .contour-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--secondary);
+            opacity: 0.28;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Poligonal de levantamiento en dorado sobre la cuadrícula */
+        .contour-bg .poligonal {
+            stroke: var(--gold-accent);
+            opacity: 0.9;
+        }
+
+        .contour-bg .poligonal-pts circle {
+            fill: var(--gold-accent);
+        }
+
+        .models3d-header,
+        .models3d-grid {
+            position: relative;
+            z-index: 1;
         }
 
         .models3d-header {
@@ -2820,6 +2851,31 @@
 
     <!-- Modelos 3D Section -->
     <section class="models3d-feed" id="inicio">
+        <!-- Fondo decorativo: cuadricula topografica + poligonal de levantamiento -->
+        <svg class="contour-bg" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+            <defs>
+                <pattern id="gridMajor" width="100" height="100" patternUnits="userSpaceOnUse">
+                    <path d="M100 0H0V100" fill="none" stroke="currentColor" stroke-width="1"/>
+                </pattern>
+                <pattern id="gridMinor" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M20 0H0V20" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+                </pattern>
+            </defs>
+            <rect x="0" y="0" width="1200" height="500" fill="url(#gridMinor)"/>
+            <rect x="0" y="0" width="1200" height="500" fill="url(#gridMajor)"/>
+            <!-- Poligonal (vertices dorados unidos) -->
+            <g class="poligonal" fill="none" stroke-width="2">
+                <polyline points="150,360 330,150 560,250 760,120 980,300 1080,180"/>
+            </g>
+            <g class="poligonal-pts">
+                <circle cx="150" cy="360" r="5"/>
+                <circle cx="330" cy="150" r="5"/>
+                <circle cx="560" cy="250" r="5"/>
+                <circle cx="760" cy="120" r="5"/>
+                <circle cx="980" cy="300" r="5"/>
+                <circle cx="1080" cy="180" r="5"/>
+            </g>
+        </svg>
         <div class="models3d-header">
             <h2 class="models3d-title">Modelos 3D de Nuestros Proyectos</h2>
             <p class="models3d-subtitle">Reconstrucciones con drone. Gíralas, acércalas y vélas en Realidad Aumentada.</p>
